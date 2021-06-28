@@ -19,13 +19,13 @@ class Content
 
     /**
      * @ORM\ManyToOne(targetEntity=TocEntry::class, inversedBy="contents")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $tocEntry;
 
     /**
      * @ORM\ManyToOne(targetEntity=Edition::class, inversedBy="contents")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $edition;
 
