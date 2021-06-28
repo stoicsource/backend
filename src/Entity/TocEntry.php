@@ -21,7 +21,7 @@ class TocEntry
 
     /**
      * @ORM\ManyToOne(targetEntity=Work::class, inversedBy="tocEntries")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $work;
 
