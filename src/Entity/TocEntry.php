@@ -11,7 +11,10 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity(repositoryClass=TocEntryRepository::class)
  */
-#[ApiResource]
+#[ApiResource(
+    collectionOperations: ['get'],
+    itemOperations: ['get'],
+)]
 class TocEntry
 {
     /**
