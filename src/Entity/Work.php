@@ -3,10 +3,12 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Repository\WorkRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=WorkRepository::class)
@@ -14,6 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ApiResource(
     collectionOperations: ['get'],
     itemOperations: ['get'],
+    normalizationContext: ['groups' => ['work']]
 )]
 class Work
 {
@@ -21,21 +24,25 @@ class Work
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"work"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"work"})
      */
     private $name;
 
     /**
      * @ORM\OneToMany(targetEntity=Edition::class, mappedBy="work")
+     * @Groups({"work"})
      */
     private $editions;
 
     /**
      * @ORM\OneToMany(targetEntity=TocEntry::class, mappedBy="work")
+     * @Groups({"work"})
      */
     private $tocEntries;
 
@@ -50,6 +57,9 @@ class Work
         return $this->id;
     }
 
+    /**
+     * @Groups({"work"})
+    */
     public function getName(): ?string
     {
         return $this->name;
