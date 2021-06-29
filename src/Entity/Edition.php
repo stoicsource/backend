@@ -45,6 +45,11 @@ class Edition
      */
     private $contents;
 
+    /**
+     * @ORM\Column(type="string", length=4, nullable=true)
+     */
+    private $year;
+
     public function __construct()
     {
         $this->authors = new ArrayCollection();
@@ -133,6 +138,18 @@ class Edition
                 $content->setEdition(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getYear(): ?string
+    {
+        return $this->year;
+    }
+
+    public function setYear(?string $year): self
+    {
+        $this->year = $year;
 
         return $this;
     }
