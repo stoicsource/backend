@@ -84,22 +84,29 @@ class EpictetusImportCommand extends Command
         $hasFragementsCol = 'G';
         $hasNotesCol = 'H';
         $copyrightCol = 'M';
+        $titleCol = 'Z';
 
         $enchirideonWork = $this->workRepository->findOneBy(['name' => 'The Enchirideon']);
 
         for ($rowIndex = 2; $rowIndex <= $translatorInfoSheet->getHighestDataRow(); $rowIndex++) {
             $authorName = $translatorInfoSheet->getCell($authorNameCol . $rowIndex)->getValue();
 
-            $author = new Author();
-            $author->setName($authorName);
-
-            $this->entityManager->persist($author);
+            $author = $this->authorRepository->findOneBy(['name' => $authorName]);
+            if (!$author) {
+                $author = new Author();
+                $author->setName($authorName);
+                $this->entityManager->persist($author);
+            }
 
             $hasEnchirideon = $translatorInfoSheet->getCell($hasEnchirideonCol . $rowIndex)->getValue() == 'Yes';
             if ($hasEnchirideon) {
+                $year = $translatorInfoSheet->getCell($editionYearCol . $rowIndex)->getValue();
+                $title = $translatorInfoSheet->getCell($titleCol . $rowIndex)->getValue();
+
                 $edition = new Edition();
-                $edition->setName('The Enchirideon');
+                $edition->setName($title ?? 'The Enchirideon');
                 $edition->setWork($enchirideonWork);
+                $edition->setYear($year);
                 $edition->addAuthor($author);
 
                 $this->entityManager->persist($edition);

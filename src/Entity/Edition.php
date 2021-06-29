@@ -46,7 +46,7 @@ class Edition
     private $contents;
 
     /**
-     * @ORM\Column(type="string", length=4, nullable=true)
+     * @ORM\Column(type="string", length=12, nullable=true)
      */
     private $year;
 
