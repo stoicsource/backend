@@ -13,36 +13,27 @@ use Symfony\Component\Serializer\Annotation\Groups;
 /**
  * @ORM\Entity(repositoryClass=WorkRepository::class)
  */
-#[ApiResource(
-    collectionOperations: ['get'],
-    itemOperations: ['get'],
-    normalizationContext: ['groups' => ['work']]
-)]
 class Work
 {
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"work"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"work"})
      */
     private $name;
 
     /**
      * @ORM\OneToMany(targetEntity=Edition::class, mappedBy="work")
-     * @Groups({"work"})
      */
     private $editions;
 
     /**
      * @ORM\OneToMany(targetEntity=TocEntry::class, mappedBy="work")
-     * @Groups({"work"})
      */
     private $tocEntries;
 
@@ -57,9 +48,6 @@ class Work
         return $this->id;
     }
 
-    /**
-     * @Groups({"work"})
-    */
     public function getName(): ?string
     {
         return $this->name;
