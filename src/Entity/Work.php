@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation\ExclusionPolicy;
 use JMS\Serializer\Annotation\Expose;
 use JMS\Serializer\Annotation\Groups;
+use JMS\Serializer\Annotation\SerializedName;
 
 /**
  * @ORM\Entity(repositoryClass=WorkRepository::class)
@@ -43,6 +44,7 @@ class Work
      * @ORM\OneToMany(targetEntity=TocEntry::class, mappedBy="work")
      *
      * @Groups({"work_details"})
+     * @SerializedName("tocEntries")
      */
     private $tocEntries;
 
