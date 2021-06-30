@@ -6,9 +6,13 @@ use App\Repository\WorkRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\ExclusionPolicy;
+use JMS\Serializer\Annotation\Expose;
+use JMS\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=WorkRepository::class)
+ *
  */
 class Work
 {
@@ -16,21 +20,29 @@ class Work
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     *
+     * @Groups({"work_details"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *
+     * @Groups({"work_details"})
      */
     private $name;
 
     /**
      * @ORM\OneToMany(targetEntity=Edition::class, mappedBy="work")
+     *
+     * @Groups({"work_details"})
      */
     private $editions;
 
     /**
      * @ORM\OneToMany(targetEntity=TocEntry::class, mappedBy="work")
+     *
+     * @Groups({"work_details"})
      */
     private $tocEntries;
 
