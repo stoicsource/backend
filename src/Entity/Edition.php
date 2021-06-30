@@ -6,7 +6,7 @@ use App\Repository\EditionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
+use JMS\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=EditionRepository::class)
@@ -17,16 +17,22 @@ class Edition
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     *
+     * @Groups({"work_details"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *
+     * @Groups({"work_details"})
      */
     private $name;
 
     /**
      * @ORM\ManyToMany(targetEntity=Author::class, mappedBy="editions")
+     *
+     * @Groups({"work_details"})
      */
     private $authors;
 
@@ -43,6 +49,8 @@ class Edition
 
     /**
      * @ORM\Column(type="string", length=12, nullable=true)
+     *
+     * @Groups({"work_details"})
      */
     private $year;
 
