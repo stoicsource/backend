@@ -29,9 +29,15 @@ class Author
      */
     private $editions;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Work::class, mappedBy="authors")
+     */
+    private $works;
+
     public function __construct()
     {
         $this->editions = new ArrayCollection();
+        $this->works = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -71,6 +77,33 @@ class Author
     public function removeEdition(Edition $edition): self
     {
         $this->editions->removeElement($edition);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Work[]
+     */
+    public function getWorks(): Collection
+    {
+        return $this->works;
+    }
+
+    public function addWork(Work $work): self
+    {
+        if (!$this->works->contains($work)) {
+            $this->works[] = $work;
+            $work->addAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWork(Work $work): self
+    {
+        if ($this->works->removeElement($work)) {
+            $work->removeAuthor($this);
+        }
 
         return $this;
     }
