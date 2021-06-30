@@ -199,14 +199,12 @@ class SenecaImportCommand extends Command
 
 
             foreach ($editionsMeta as $editionMeta) {
-                foreach ($editionsMeta as $edition) {
-                    /* @var $author Author */
-                    $author = $edition['author'];
-                    $matchingEditions = $author->getEditions()->filter(function ($edition) use ($work) {
-                        return $edition->getWork()->getId() == $work->getId();
-                    });
-                    $edition = $matchingEditions->first();
-                }
+                /* @var $author Author */
+                $author = $editionMeta['author'];
+                $matchingEditions = $author->getEditions()->filter(function ($edition) use ($work) {
+                    return $edition->getWork()->getId() == $work->getId();
+                });
+                $edition = $matchingEditions->first();
 
                 if ($edition) {
                     $content = $essaysSheet->getCell($editionMeta['contentColumn'] . $rowIndex)->getValue();
