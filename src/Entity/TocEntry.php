@@ -19,6 +19,7 @@ class TocEntry
      * @ORM\Column(type="integer")
      *
      * @Groups({"work_details"})
+     * @Groups({"content_details"})
      */
     private $id;
 
