@@ -362,9 +362,6 @@
     "symfony/security-core": {
         "version": "v5.3.2"
     },
-    "symfony/serializer": {
-        "version": "v5.3.2"
-    },
     "symfony/serializer-pack": {
         "version": "v1.0.4"
     },
