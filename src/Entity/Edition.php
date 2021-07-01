@@ -18,8 +18,7 @@ class Edition
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      *
-     * @Groups({"work_details"})
-     * @Groups({"content_details"})
+     * @Groups({"work_details", "content_details"})
      */
     private $id;
 

@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\ContentRepository;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation\Groups;
+use JMS\Serializer\Annotation\SerializedName;
 
 /**
  * @ORM\Entity(repositoryClass=ContentRepository::class)
@@ -25,6 +26,7 @@ class Content
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      *
      * @Groups({"content_details"})
+     * @SerializedName("tocEntry")
      */
     private $tocEntry;
 
