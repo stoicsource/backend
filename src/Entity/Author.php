@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation\Groups;
+use JMS\Serializer\Annotation\SerializedName;
 
 /**
  * @ORM\Entity(repositoryClass=AuthorRepository::class)
@@ -38,6 +39,14 @@ class Author
      * @ORM\ManyToMany(targetEntity=Work::class, mappedBy="authors")
      */
     private $works;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     *
+     * @Groups({"work_details"})
+     * @SerializedName("shortName")
+     */
+    private $shortName;
 
     public function __construct()
     {
@@ -109,6 +118,18 @@ class Author
         if ($this->works->removeElement($work)) {
             $work->removeAuthor($this);
         }
+
+        return $this;
+    }
+
+    public function getShortName(): ?string
+    {
+        return $this->shortName;
+    }
+
+    public function setShortName(?string $shortName): self
+    {
+        $this->shortName = $shortName;
 
         return $this;
     }
