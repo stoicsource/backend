@@ -50,6 +50,8 @@ class Work
 
     /**
      * @ORM\ManyToMany(targetEntity=Author::class, inversedBy="works")
+     *
+     * @Groups({"work_details"})
      */
     private $authors;
 
