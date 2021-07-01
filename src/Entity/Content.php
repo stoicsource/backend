@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\ContentRepository;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=ContentRepository::class)
@@ -14,28 +15,38 @@ class Content
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     *
+     * @Groups({"content_details"})
      */
     private $id;
 
     /**
      * @ORM\ManyToOne(targetEntity=TocEntry::class, inversedBy="contents")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     *
+     * @Groups({"content_details"})
      */
     private $tocEntry;
 
     /**
      * @ORM\ManyToOne(targetEntity=Edition::class, inversedBy="contents")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     *
+     * @Groups({"content_details"})
      */
     private $edition;
 
     /**
      * @ORM\Column(type="text")
+     *
+     * @Groups({"content_details"})
      */
     private $content;
 
     /**
      * @ORM\Column(type="text", nullable=true)
+     *
+     * @Groups({"content_details"})
      */
     private $notes;
 

@@ -19,6 +19,7 @@ class Edition
      * @ORM\Column(type="integer")
      *
      * @Groups({"work_details"})
+     * @Groups({"content_details"})
      */
     private $id;
 
