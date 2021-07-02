@@ -40,6 +40,13 @@ class TocEntry
      */
     private $label;
 
+    /**
+     * @ORM\Column(type="integer")
+     *
+     * @Groups({"work_details"})
+     */
+    private $sortOrder;
+
     public function __construct()
     {
         $this->contents = new ArrayCollection();
@@ -100,6 +107,18 @@ class TocEntry
     public function setLabel(string $label): self
     {
         $this->label = $label;
+
+        return $this;
+    }
+
+    public function getSortOrder(): ?int
+    {
+        return $this->sortOrder;
+    }
+
+    public function setSortOrder(int $sortOrder): self
+    {
+        $this->sortOrder = $sortOrder;
 
         return $this;
     }
