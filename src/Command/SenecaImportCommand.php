@@ -79,8 +79,10 @@ class SenecaImportCommand extends Command
         $authorNameCol = 'B';
         $editionYearCol = 'C';
         $workNameCol = 'F';
+        $editionNameCol = 'G';
+        $sourceCol = 'P';
 
-        $endRow = 41;
+        $endRow = 44;
 
         $senecaAuthor = $this->authorRepository->findOneBy(['name' => 'Lucius Annaeus Seneca the Younger']);
 
@@ -104,11 +106,14 @@ class SenecaImportCommand extends Command
             }
 
             $year = $translatorInfoSheet->getCell($editionYearCol . $rowIndex)->getValue();
+            $editonName = $translatorInfoSheet->getCell($editionNameCol . $rowIndex)->getValue();
+            $source = $translatorInfoSheet->getCell($sourceCol . $rowIndex)->getValue();
 
             $edition = new Edition();
-            $edition->setName($workName);
+            $edition->setName($editonName ?? $workName);
             $edition->setWork($work);
             $edition->setYear($year);
+            $edition->setSource($source);
             $edition->addAuthor($author);
 
             $this->entityManager->persist($edition);
@@ -122,18 +127,18 @@ class SenecaImportCommand extends Command
         $essaysSheet = $spreadsheet->getSheetByName('Dia Txt');
 
         $nameMappings = [
-            'De Providentia' => 'On Providence',
-            'De Constantia Sapientis' => 'On the Constancy Of A Wise Man',
-            'De Ira' => 'On Anger',
-            'Ad Marciam, De Consolatione' => 'On Consolation - To Marcia',
-            'De Vita Beata' => 'On Blessed Life',
-            'De Otio' => 'On Leisure',
-            'De Tranquillitate Animi' => 'The Tranquility and Peace of the Mind',
-            'De Brevitae Vitae' => 'On the Shortness Of Life',
-            'De Consolatione ad Polybium' => 'On Comfort',
-            'Ad Helvian matrem, De consolatione' => 'On Consolation - To Helvia',
-            'De Clementia' => 'On Clemency',
-            'De Beneficiis' => 'On Benefits'
+            'De Providentia' => 'Of Providence',
+            'De Constantia Sapientis' => 'On the Firmness of a Wise Man',
+            'De Ira' => 'Of Anger',
+            'Ad Marciam, De Consolatione' => 'Of Consolation - To Marcia',
+            'De Vita Beata' => 'Of Blessed Life',
+            'De Otio' => 'Of Leisure',
+            'De Tranquillitate Animi' => 'Of Peace of Mind',
+            'De Brevitae Vitae' => 'Of the Shortness Of Life',
+            'De Consolatione ad Polybium' => 'Of Consolation - To Polybius',
+            'Ad Helvian matrem, De consolatione' => 'Of Consolation - To Helvia',
+            'De Clementia' => 'Of Clemency',
+            'De Beneficiis' => 'Of Benefits'
         ];
 
         $editionsMeta = [
