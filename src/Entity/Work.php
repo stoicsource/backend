@@ -55,6 +55,13 @@ class Work
      */
     private $authors;
 
+    /**
+     * @ORM\Column(type="string", length=255, unique=true)
+     *
+     * @Groups({"work_details"})
+     */
+    private $urlSlug;
+
     public function __construct()
     {
         $this->editions = new ArrayCollection();
@@ -159,6 +166,18 @@ class Work
     public function removeAuthor(Author $author): self
     {
         $this->authors->removeElement($author);
+
+        return $this;
+    }
+
+    public function getUrlSlug(): ?string
+    {
+        return $this->urlSlug;
+    }
+
+    public function setUrlSlug(string $urlSlug): self
+    {
+        $this->urlSlug = $urlSlug;
 
         return $this;
     }

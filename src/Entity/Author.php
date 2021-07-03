@@ -48,6 +48,13 @@ class Author
      */
     private $shortName;
 
+    /**
+     * @ORM\Column(type="string", length=255, unique=true)
+     *
+     * @Groups({"work_details"})
+     */
+    private $urlSlug;
+
     public function __construct()
     {
         $this->editions = new ArrayCollection();
@@ -130,6 +137,18 @@ class Author
     public function setShortName(?string $shortName): self
     {
         $this->shortName = $shortName;
+
+        return $this;
+    }
+
+    public function getUrlSlug(): ?string
+    {
+        return $this->urlSlug;
+    }
+
+    public function setUrlSlug(string $urlSlug): self
+    {
+        $this->urlSlug = $urlSlug;
 
         return $this;
     }
