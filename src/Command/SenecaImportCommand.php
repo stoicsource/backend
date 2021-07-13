@@ -82,7 +82,7 @@ class SenecaImportCommand extends Command
         $editionNameCol = 'G';
         $sourceCol = 'P';
 
-        $endRow = 44;
+        $endRow = 43;
 
         $senecaAuthor = $this->authorRepository->findOneBy(['name' => 'Lucius Annaeus Seneca the Younger']);
 
@@ -93,6 +93,7 @@ class SenecaImportCommand extends Command
             if (!$author) {
                 $author = new Author();
                 $author->setName($authorName);
+                $author->setUrlSlug(strtolower($authorName));
                 $this->entityManager->persist($author);
             }
 
@@ -200,6 +201,7 @@ class SenecaImportCommand extends Command
             $tocEntry = new TocEntry();
             $tocEntry->setLabel($tocLabel);
             $tocEntry->setWork($work);
+            $tocEntry->setSortOrder($rowIndex);
             $this->entityManager->persist($tocEntry);
 
 
@@ -215,6 +217,9 @@ class SenecaImportCommand extends Command
                     $content = $essaysSheet->getCell($editionMeta['contentColumn'] . $rowIndex)->getValue();
 
                     if ($content > '') {
+                        $content = trim($content, ' *');
+                        $content = $this->ConvertMultipleUppercaseToSingle($content);
+
                         $newContent = new Content();
                         $newContent->setContent($content);
                         $newContent->setEdition($edition);
@@ -227,5 +232,20 @@ class SenecaImportCommand extends Command
         }
 
         $this->entityManager->flush();
+    }
+
+    protected function ConvertMultipleUppercaseToSingle($text)
+    {
+        $firstTwo = mb_substr($text, 0, 2, "UTF-8");
+        $firstTwoAreUpper = mb_strtoupper($firstTwo, "UTF-8") == $firstTwo;
+
+        $third = mb_substr($text, 2, 1, "UTF-8");
+        $thirdIsLower = mb_strtolower($third, "UTF-8") == $third;
+
+        if ($firstTwoAreUpper && $thirdIsLower) {
+            $text[1] = mb_strtolower($text[1], "UTF-8");
+        }
+
+        return $text;
     }
 }
