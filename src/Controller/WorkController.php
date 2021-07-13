@@ -12,7 +12,7 @@ use FOS\RestBundle\Controller\Annotations\Route;
  * Class WorkController
  * @package App\Controller
  *
- * @Route("/api",name="api_")
+ * @Route("/api/v1",name="api_")
  */
 class WorkController extends AbstractFOSRestController
 {

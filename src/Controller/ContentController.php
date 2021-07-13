@@ -16,7 +16,7 @@ use FOS\RestBundle\Request\ParamFetcherInterface;
  * Class WorkController
  * @package App\Controller
  *
- * @Route("/api",name="api_")
+ * @Route("/api/v1",name="api_")
  */
 class ContentController extends AbstractFOSRestController
 {
