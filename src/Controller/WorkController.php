@@ -28,6 +28,11 @@ class WorkController extends AbstractFOSRestController
         $view = $this->view($works, 200);
         $view->getContext()->setGroups(['work_details']);
 
-        return $this->handleView($view);
+        $response = $this->handleView($view);
+
+        $response->setPublic();
+        $response->setMaxAge(3600);
+
+        return $response;
     }
 }

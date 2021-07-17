@@ -42,10 +42,14 @@ class ContentController extends AbstractFOSRestController
             ->setMaxResults(30)
             ->getQuery()->getResult();
 
-        //$works = $contentRepository->find(7438);
         $view = $this->view($contents, 200);
         $view->getContext()->setGroups(['content_details']);
 
-        return $this->handleView($view);
+        $response = $this->handleView($view);
+
+        $response->setPublic();
+        $response->setMaxAge(3600);
+
+        return $response;
     }
 }
