@@ -28,7 +28,8 @@
         "symfony/proxy-manager-bridge": "5.3.*",
         "symfony/runtime": "5.3.*",
         "symfony/validator": "5.3.*",
-        "symfony/yaml": "5.3.*"
+        "symfony/yaml": "5.3.*",
+        "wandersonwhcr/romans": "^1.3"
     },
     "config": {
         "optimize-autoloader": true,
