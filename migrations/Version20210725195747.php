@@ -21,7 +21,10 @@ final class Version20210725195747 extends AbstractMigration
     {
         $this->addSql("DELETE FROM content WHERE content LIKE '%[none%'");
 
-        $this->addSql("DELETE FROM author WHERE url_slug = 'poq'");
+        $this->addSql("
+            DELETE FROM author WHERE url_slug = 'poq';
+            DELETE FROM edition WHERE id NOT IN (SELECT edition_id FROM author_edition);
+        ");
 
         $this->addSql("DELETE
             FROM edition
