@@ -9,7 +9,7 @@ return function (array $context) {
     $kernel = new Kernel($context['APP_ENV'], (bool)$context['APP_DEBUG']);
 
     // Wrap the default Kernel with the CacheKernel one in 'prod' environment
-    if ('prod' === $kernel->getEnvironment()) {
+    if (true || 'prod' === $kernel->getEnvironment()) {
         $kernel = new CacheKernel($kernel);
     }
 
