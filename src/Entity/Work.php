@@ -58,7 +58,7 @@ class Work
     /**
      * @ORM\Column(type="string", length=255, unique=true)
      *
-     * @Groups({"work_details"})
+     * @Groups({"work_details", "work_list"})
      */
     private $urlSlug;
 

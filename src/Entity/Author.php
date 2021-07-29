@@ -43,7 +43,7 @@ class Author
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      *
-     * @Groups({"work_details"})
+     * @Groups({"work_details", "work_list"})
      * @SerializedName("shortName")
      */
     private $shortName;
@@ -51,7 +51,7 @@ class Author
     /**
      * @ORM\Column(type="string", length=255, unique=true)
      *
-     * @Groups({"work_details"})
+     * @Groups({"work_details", "work_list"})
      */
     private $urlSlug;
 
