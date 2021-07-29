@@ -26,6 +26,27 @@ class WorkController extends AbstractFOSRestController
     {
         $works = $workRepository->findAll();
         $view = $this->view($works, 200);
+        // $view->getContext()->setGroups(['work_details']);
+        $view->getContext()->setGroups(['work_list']);
+
+        $response = $this->handleView($view);
+
+        $response->setPublic();
+        $response->setMaxAge(3600);
+
+        return $response;
+    }
+
+    /**
+     * @param WorkRepository $workRepository
+     * @return \Symfony\Component\HttpFoundation\Response
+     *
+     * @Route("/work/{id}", name="work_details")
+     */
+    public function getWorkDetails($id, WorkRepository $workRepository)
+    {
+        $work = $workRepository->find($id);
+        $view = $this->view($work, 200);
         $view->getContext()->setGroups(['work_details']);
 
         $response = $this->handleView($view);

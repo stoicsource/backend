@@ -19,14 +19,14 @@ class Author
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      *
-     * @Groups({"work_details"})
+     * @Groups({"work_details", "work_list"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      *
-     * @Groups({"work_details"})
+     * @Groups({"work_details", "work_list"})
      */
     private $name;
 
