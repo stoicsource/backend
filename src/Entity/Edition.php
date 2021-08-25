@@ -59,6 +59,11 @@ class Edition
      */
     private $source;
 
+    /**
+     * @ORM\Column(type="string", length=3)
+     */
+    private $language;
+
     public function __construct()
     {
         $this->authors = new ArrayCollection();
@@ -171,6 +176,18 @@ class Edition
     public function setSource(?string $source): self
     {
         $this->source = $source;
+
+        return $this;
+    }
+
+    public function getLanguage(): ?string
+    {
+        return $this->language;
+    }
+
+    public function setLanguage(string $language): self
+    {
+        $this->language = $language;
 
         return $this;
     }
