@@ -24,13 +24,13 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class WebImportCommand extends Command
+class WebImportMultipleCommand extends Command
 {
     private AuthorRepository $authorRepository;
     private EntityManagerInterface $entityManager;
     private WorkRepository $workRepository;
     private TocEntryRepository $tocEntryRepository;
-    protected static $defaultName = 'app:import:web';
+    protected static $defaultName = 'app:import:webmultiple';
 
     public function __construct(AuthorRepository $authorRepository, WorkRepository $workRepository, TocEntryRepository $tocEntryRepository, EntityManagerInterface $entityManager)
     {
