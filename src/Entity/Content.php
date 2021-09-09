@@ -52,6 +52,13 @@ class Content
      */
     private $notes;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     *
+     * @Groups({"content_details"})
+     */
+    private $title;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -101,6 +108,18 @@ class Content
     public function setNotes(?string $notes): self
     {
         $this->notes = $notes;
+
+        return $this;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(?string $title): self
+    {
+        $this->title = $title;
 
         return $this;
     }
