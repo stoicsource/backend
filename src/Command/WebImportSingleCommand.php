@@ -14,6 +14,7 @@ use App\Repository\TocEntryRepository;
 use App\Repository\WorkRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use DOMDocument;
+use DOMNode;
 use DOMXPath;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -52,25 +53,26 @@ class WebImportSingleCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $url = 'https://www.projekt-gutenberg.org/epiktet/moral/moral.html';
+        $url = 'https://www.stoicsource.com/rufus.html';
 
-        $enchirideonWork = $this->workRepository->findOneBy(['name' => 'The Enchirideon']);
+        $lecturesWork = $this->workRepository->findOneBy(['name' => 'Lectures']);
 
-        $authorName = 'Carl Hilty';
+        $authorName = 'Cora Elizabeth Lutz';
         $author = $this->authorRepository->findOneBy(['name' => $authorName]);
         if (!$author) {
             $author = new Author();
             $author->setName($authorName);
-            $author->setUrlSlug('hilty');
+            $author->setShortName('Cora E. Lutz');
+            $author->setUrlSlug('lutz');
             $this->entityManager->persist($author);
         }
 
         $edition = new Edition();
-        $edition->setName('Handbüchlein der Moral');
-        $edition->setWork($enchirideonWork);
-        $edition->setYear(1946);
-        $edition->setLanguage('deu');
-        $edition->setSource('https://www.projekt-gutenberg.org/epiktet/moral/moral.html');
+        $edition->setName('The Roman Socrates');
+        $edition->setWork($lecturesWork);
+        $edition->setYear(1947);
+        $edition->setLanguage('eng');
+        $edition->setSource($url);
         $edition->addAuthor($author);
         $this->entityManager->persist($edition);
 
@@ -78,45 +80,49 @@ class WebImportSingleCommand extends Command
         $doc = new DOMDocument();
         @$doc->loadHTMLFile($url);
         $x = new DOMXPath($doc);
-        $headNodes = $x->query('//h4');
+        $headNodes = $x->query('//h2');
 
-        foreach ($headNodes as $headNode) {
-            $headerText = $headNode->nodeValue;
-            $startsWithNumber = preg_match('/^\d/', $headerText) === 1;
+        foreach ($headNodes as $index => $headNode) {
+            /* @var DOMNode $headNode */
+            $tocLabel = $headNode->firstChild->nodeValue;
+            $tocTitle = $headNode->lastChild->nodeValue;
 
-            if ($startsWithNumber) {
-                $fullTocLabel = $headerText;
+            $io->info("importing $tocLabel");
 
-                $io->info("importing $fullTocLabel");
-
-                $textNode = $headNode->nextSibling;
-                if ($textNode->nodeValue == "\n") {
-                    $textNode = $textNode->nextSibling;
-                }
-
-                $combinedText = '';
-                while ($textNode->tagName === 'p') {
-                    $combinedText .= ($combinedText > '' ? "\n" : '') . $textNode->nodeValue;
-
-                    $textNode = $textNode->nextSibling;
-                    if ($textNode->nodeValue == "\n") {
-                        $textNode = $textNode->nextSibling;
-                    }
-                }
-
-                $tocEntry = $this->tocEntryRepository->findOneBy(['work' => $enchirideonWork, 'label' => $fullTocLabel]);
-
-                if (!$tocEntry) {
-                    die("no toc entry for " . $fullTocLabel);
-                }
-
-                $newContent = new Content();
-                $newContent->setContent($combinedText);
-                $newContent->setEdition($edition);
-                $newContent->setTocEntry($tocEntry);
-
-                $this->entityManager->persist($newContent);
+            $textNode = $headNode->nextSibling;
+            if (trim($textNode->nodeValue) == '') {
+                $textNode = $textNode->nextSibling;
             }
+
+            $combinedText = '';
+            while ($textNode->tagName === 'p') {
+                $combinedText .= ($combinedText > '' ? "\n" : '') . $textNode->nodeValue;
+
+                $textNode = $textNode->nextSibling;
+                if (trim($textNode->nodeValue) == '') {
+                    $textNode = $textNode->nextSibling;
+                }
+            }
+            $combinedText = str_replace("\r\n", '', $combinedText);
+
+            $tocEntry = $this->tocEntryRepository->findOneBy(['work' => $lecturesWork, 'label' => $tocLabel]);
+
+            if (!$tocEntry) {
+                $tocEntry = new TocEntry();
+                $tocEntry->setWork($lecturesWork);
+                $tocEntry->setLabel($tocLabel);
+                $tocEntry->setSortOrder($index + 1);
+                $this->entityManager->persist($tocEntry);
+            }
+
+            $newContent = new Content();
+            $newContent->setContent($combinedText);
+            $newContent->setEdition($edition);
+            $newContent->setTitle(ucfirst(strtolower($tocTitle)));
+            $newContent->setTocEntry($tocEntry);
+
+            $this->entityManager->persist($newContent);
+
         }
 
         $this->entityManager->flush();
