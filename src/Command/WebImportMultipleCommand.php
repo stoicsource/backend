@@ -9,6 +9,7 @@ use App\Entity\Client;
 use App\Entity\Content;
 use App\Entity\Edition;
 use App\Entity\TocEntry;
+use App\Entity\Work;
 use App\Repository\AuthorRepository;
 use App\Repository\TocEntryRepository;
 use App\Repository\WorkRepository;
@@ -45,86 +46,93 @@ class WebImportMultipleCommand extends Command
     protected function configure()
     {
         $this
-            ->setDescription('imports data from the web')
-        ;
+            ->setDescription('imports data from the web');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
 
-        $firstUrl = 'https://www.projekt-gutenberg.org/antonius/selbstbe/chap001.html';
+        $firstUrl = 'https://en.wikisource.org/wiki/Moral_letters_to_Lucilius/Letter_1';
 
-        $meditationsWork = $this->workRepository->findOneBy(['name' => 'The Meditations']);
+        $workName = 'Moral Letters to Lucilius';
+        $lettersWork = $this->workRepository->findOneBy(['name' => $workName]);
+        if (!$lettersWork) {
+            $lettersWork = new Work();
+            $lettersWork->setName($workName);
+            $lettersWork->setUrlSlug('letters');
+            $lettersWork->addAuthor($this->authorRepository->findOneBy(['urlSlug' => 'seneca']));
 
-        $authorName = 'Albert Friedrich Wittstock';
+            $this->entityManager->persist($lettersWork);
+        }
+
+        $authorName = 'Richard Mott Gummere';
         $author = $this->authorRepository->findOneBy(['name' => $authorName]);
         if (!$author) {
             $author = new Author();
             $author->setName($authorName);
-            $author->setUrlSlug('wittstock');
+            $author->setUrlSlug('gummere');
             $this->entityManager->persist($author);
         }
 
         $edition = new Edition();
-        $edition->setName('Des Kaisers Marcus Aurelius Antonius Selbstbetrachtungen');
-        $edition->setWork($meditationsWork);
-        $edition->setYear(1894);
-        $edition->setLanguage('deu');
-        $edition->setSource('https://www.projekt-gutenberg.org/antonius/selbstbe/index.html');
+        $edition->setName('Moral letters to Lucilius');
+        $edition->setWork($lettersWork);
+        $edition->setYear(1925);
+        $edition->setLanguage('eng');
+        $edition->setSource($firstUrl);
         $edition->addAuthor($author);
         $this->entityManager->persist($edition);
 
-        for ($bookNr = 1; $bookNr <= 12; $bookNr++) {
-            $url = str_replace('001', sprintf('%03d', $bookNr), $firstUrl);
+        for ($letterNr = 1; $letterNr <= 4; $letterNr++) {
+            $url = str_replace('1', sprintf('%d', $letterNr), $firstUrl);
 
-            $io->info("Importing Book $bookNr from $url");
+            $io->info("Importing Book $letterNr from $url");
 
             $doc = new DOMDocument();
             @$doc->loadHTMLFile($url);
             $x = new DOMXPath($doc);
-            $headNodes = $x->query('//h5');
+            $headNodes = $x->query('//h2');
 
-            foreach ($headNodes as $headNode) {
-                $headerText = $headNode->nodeValue;
-                $startsWithNumber = preg_match('/^\d/', $headerText) === 1;
+            $headNode = $headNodes[0];
 
-                if ($startsWithNumber) {
-                    $chapterNumber = str_replace('.', '', $headerText);
-                    $leadingZero = $chapterNumber < 10 ? '0' : '';
-                    $fullTocLabel = $bookNr . '.' . $leadingZero . $chapterNumber;
+            $fullTocLabel = $letterNr;
 
-                    $io->info("importing $fullTocLabel");
+            $io->info("importing $fullTocLabel");
 
-                    $textNode = $headNode->nextSibling;
-                    if ($textNode->nodeValue == "\n") {
-                        $textNode = $textNode->nextSibling;
-                    }
+            $textNode = $headNode->nextSibling;
+            if (trim($textNode->nodeValue) == '') {
+                $textNode = $textNode->nextSibling;
+            }
 
-                    if ($textNode) {
-                        $textWithoutComments = '';
-                        foreach ($textNode->childNodes as $childNode) {
-                            if ($childNode->nodeName == '#text') {
-                                $textWithoutComments .= $childNode->nodeValue;
-                            }
-                        }
-                        // $io->info("text: " . substr($textWithoutComments, 0, 100));
+            $combinedText = '';
+            while ($textNode->tagName === 'p') {
+                $combinedText .= ($combinedText > '' ? "\n" : '') . $textNode->nodeValue;
 
-                        $tocEntry = $this->tocEntryRepository->findOneBy(['work' => $meditationsWork, 'label' => $fullTocLabel]);
-
-                        if (!$tocEntry) {
-                            die("no toc entry for " . $fullTocLabel);
-                        }
-
-                        $newContent = new Content();
-                        $newContent->setContent($textWithoutComments);
-                        $newContent->setEdition($edition);
-                        $newContent->setTocEntry($tocEntry);
-
-                        $this->entityManager->persist($newContent);
-                    }
+                $textNode = $textNode->nextSibling;
+                if (trim($textNode->nodeValue) == '') {
+                    $textNode = $textNode->nextSibling;
                 }
             }
+            $combinedText = str_replace("\r\n", '', $combinedText);
+            $combinedText = str_replace("\n\n", "\n", $combinedText);
+
+            $tocEntry = $this->tocEntryRepository->findOneBy(['work' => $lettersWork, 'label' => $fullTocLabel]);
+
+            if (!$tocEntry) {
+                $tocEntry = new TocEntry();
+                $tocEntry->setWork($lettersWork);
+                $tocEntry->setLabel($fullTocLabel);
+                $tocEntry->setSortOrder($letterNr);
+                $this->entityManager->persist($tocEntry);
+            }
+
+            $newContent = new Content();
+            $newContent->setContent($combinedText);
+            $newContent->setEdition($edition);
+            $newContent->setTocEntry($tocEntry);
+
+            $this->entityManager->persist($newContent);
         }
 
         $this->entityManager->flush();
