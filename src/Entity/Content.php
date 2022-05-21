@@ -12,6 +12,11 @@ use JMS\Serializer\Annotation\SerializedName;
  */
 class Content
 {
+    const CONTENT_TYPE_TEXT = 1;
+    const CONTENT_TYPE_HTML = 2;
+
+    const ALLOWED_HTML_TAGS = ['<p>', '<blockquote>', '<sup>', '<b>'];
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -58,6 +63,14 @@ class Content
      * @Groups({"content_details"})
      */
     private $title;
+
+    /**
+     * @ORM\Column(type="smallint")
+     *
+     * @Groups({"content_details"})
+     * @SerializedName("contentType")
+     */
+    private $contentType;
 
     public function getId(): ?int
     {
@@ -120,6 +133,18 @@ class Content
     public function setTitle(?string $title): self
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    public function getContentType(): ?int
+    {
+        return $this->contentType;
+    }
+
+    public function setContentType(int $contentType): self
+    {
+        $this->contentType = $contentType;
 
         return $this;
     }

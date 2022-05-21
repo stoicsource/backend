@@ -15,6 +15,7 @@ use App\Repository\TocEntryRepository;
 use App\Repository\WorkRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use DOMDocument;
+use DOMElement;
 use DOMXPath;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -84,7 +85,8 @@ class WebImportMultipleCommand extends Command
         $edition->addAuthor($author);
         $this->entityManager->persist($edition);
 
-        for ($letterNr = 1; $letterNr <= 4; $letterNr++) {
+        // 124
+        for ($letterNr = 1; $letterNr <= 124; $letterNr++) {
             $url = str_replace('1', sprintf('%d', $letterNr), $firstUrl);
 
             $io->info("Importing Book $letterNr from $url");
@@ -100,22 +102,53 @@ class WebImportMultipleCommand extends Command
 
             $io->info("importing $fullTocLabel");
 
+            /* @var $textNode DOMElement */
             $textNode = $headNode->nextSibling;
             if (trim($textNode->nodeValue) == '') {
                 $textNode = $textNode->nextSibling;
             }
 
             $combinedText = '';
-            while ($textNode->tagName === 'p') {
-                $combinedText .= ($combinedText > '' ? "\n" : '') . $textNode->nodeValue;
+            while ($textNode->tagName === 'p' || $textNode->tagName === 'blockquote') {
+                // $textNode->
+                // $combinedText .= ($combinedText > '' ? "\n" : '') . $textNode->nodeValue;
+
+//                foreach($textNode->childNodes as $node) {
+//                    $combinedText .= $node->ownerDocument->saveHTML($node);
+//                }
+
+                $combinedText .= $textNode->ownerDocument->saveHTML($textNode);
 
                 $textNode = $textNode->nextSibling;
                 if (trim($textNode->nodeValue) == '') {
                     $textNode = $textNode->nextSibling;
                 }
             }
-            $combinedText = str_replace("\r\n", '', $combinedText);
-            $combinedText = str_replace("\n\n", "\n", $combinedText);
+//            $combinedText = str_replace("\r\n", '', $combinedText);
+//            $combinedText = str_replace("\n\n", "\n", $combinedText);
+
+            $combinedText = strip_tags($combinedText, Content::ALLOWED_HTML_TAGS);
+
+
+            // references
+            $entryNotes = null;
+            $listNodes = $x->query('//ol');
+            if (count($listNodes) > 0) {
+                /* @var DomElement $referencesListNode */
+                $referencesListNode = $listNodes[0];
+                $refNumber = 0;
+
+                foreach ($referencesListNode->childNodes as $childNode) {
+                    if (trim($childNode->nodeValue) == '') {
+                        continue;
+                    }
+
+                    $sanitizedNodeValue = str_replace('↑', '', $childNode->nodeValue);
+
+                    $entryNotes .= ++$refNumber . $sanitizedNodeValue . '<br>';
+                }
+            }
+
 
             $tocEntry = $this->tocEntryRepository->findOneBy(['work' => $lettersWork, 'label' => $fullTocLabel]);
 
@@ -131,6 +164,8 @@ class WebImportMultipleCommand extends Command
             $newContent->setContent($combinedText);
             $newContent->setEdition($edition);
             $newContent->setTocEntry($tocEntry);
+            $newContent->setNotes($entryNotes);
+            $newContent->setContentType(Content::CONTENT_TYPE_HTML);
 
             $this->entityManager->persist($newContent);
         }
