@@ -98,7 +98,7 @@ class WebImportMultipleCommand extends Command
 
             $this->entityManager->persist($content);
 
-            // usleep(100000);
+            usleep(100000);
         }
 
         $this->entityManager->flush();
