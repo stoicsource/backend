@@ -4,25 +4,18 @@
 namespace App\Command;
 
 
-use App\Entity\Author;
 use App\Entity\Client;
-use App\Entity\Content;
-use App\Entity\Edition;
-use App\Entity\TocEntry;
-use App\Entity\Work;
 use App\Repository\AuthorRepository;
+use App\Repository\ContentRepository;
+use App\Repository\EditionRepository;
 use App\Repository\TocEntryRepository;
 use App\Repository\WorkRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use DOMDocument;
 use DOMElement;
 use DOMXPath;
-use PhpOffice\PhpSpreadsheet\IOFactory;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -33,13 +26,17 @@ class WebImportMultipleCommand extends Command
     private WorkRepository $workRepository;
     private TocEntryRepository $tocEntryRepository;
     protected static $defaultName = 'app:import:webmultiple';
+    private EditionRepository $editionRepository;
+    private ContentRepository $contentRepository;
 
-    public function __construct(AuthorRepository $authorRepository, WorkRepository $workRepository, TocEntryRepository $tocEntryRepository, EntityManagerInterface $entityManager)
+    public function __construct(AuthorRepository $authorRepository, WorkRepository $workRepository, TocEntryRepository $tocEntryRepository, EntityManagerInterface $entityManager, EditionRepository $editionRepository, ContentRepository $contentRepository)
     {
         $this->authorRepository = $authorRepository;
         $this->entityManager = $entityManager;
         $this->workRepository = $workRepository;
         $this->tocEntryRepository = $tocEntryRepository;
+        $this->editionRepository = $editionRepository;
+        $this->contentRepository = $contentRepository;
 
         parent::__construct();
     }
@@ -57,117 +54,51 @@ class WebImportMultipleCommand extends Command
         $firstUrl = 'https://en.wikisource.org/wiki/Moral_letters_to_Lucilius/Letter_1';
 
         $workName = 'Moral Letters to Lucilius';
-        $lettersWork = $this->workRepository->findOneBy(['name' => $workName]);
-        if (!$lettersWork) {
-            $lettersWork = new Work();
-            $lettersWork->setName($workName);
-            $lettersWork->setUrlSlug('letters');
-            $lettersWork->addAuthor($this->authorRepository->findOneBy(['urlSlug' => 'seneca']));
+        $work = $this->workRepository->findOneBy(['name' => $workName]);
 
-            $this->entityManager->persist($lettersWork);
+        $editionName = 'Moral letters to Lucilius';
+        $edition = $this->editionRepository->findOneBy(['name' => $editionName]);
+
+        if (!$work || !$edition) {
+            return "oops";
         }
-
-        $authorName = 'Richard Mott Gummere';
-        $author = $this->authorRepository->findOneBy(['name' => $authorName]);
-        if (!$author) {
-            $author = new Author();
-            $author->setName($authorName);
-            $author->setUrlSlug('gummere');
-            $this->entityManager->persist($author);
-        }
-
-        $edition = new Edition();
-        $edition->setName('Moral letters to Lucilius');
-        $edition->setWork($lettersWork);
-        $edition->setYear(1925);
-        $edition->setLanguage('eng');
-        $edition->setSource($firstUrl);
-        $edition->addAuthor($author);
-        $this->entityManager->persist($edition);
 
         // 124
         for ($letterNr = 1; $letterNr <= 124; $letterNr++) {
+            $tocEntry = $this->tocEntryRepository->findOneBy(['work' => $work, 'label' => $letterNr]);
+            $content = $this->contentRepository->findOneBy(['tocEntry' => $tocEntry, 'edition' => $edition]);
+
+            if (!$content || !$tocEntry) {
+                return "oops 2";
+            }
+
             $url = str_replace('1', sprintf('%d', $letterNr), $firstUrl);
 
-            $io->info("Importing Book $letterNr from $url");
+            // $io->info("Importing Book $letterNr from $url");
 
             $doc = new DOMDocument();
             @$doc->loadHTMLFile($url);
             $x = new DOMXPath($doc);
             $headNodes = $x->query('//h2');
 
+            /* @var $headNode DOMElement */
             $headNode = $headNodes[0];
+            $spanNode = $headNode->firstChild;
 
-            $fullTocLabel = $letterNr;
-
-            $io->info("importing $fullTocLabel");
-
-            /* @var $textNode DOMElement */
-            $textNode = $headNode->nextSibling;
-            if (trim($textNode->nodeValue) == '') {
-                $textNode = $textNode->nextSibling;
+            if ($spanNode->nodeValue == '') {
+                $spanNode = $spanNode->nextSibling;
             }
 
-            $combinedText = '';
-            while ($textNode->tagName === 'p' || $textNode->tagName === 'blockquote') {
-                // $textNode->
-                // $combinedText .= ($combinedText > '' ? "\n" : '') . $textNode->nodeValue;
+            $rawHeadline = $spanNode->nodeValue;
+            $refinedHeadline = trim(substr($rawHeadline, strpos($rawHeadline, '.') + 1));
 
-//                foreach($textNode->childNodes as $node) {
-//                    $combinedText .= $node->ownerDocument->saveHTML($node);
-//                }
+            $io->info("importing $letterNr as $refinedHeadline");
 
-                $combinedText .= $textNode->ownerDocument->saveHTML($textNode);
+            $content->setTitle($refinedHeadline);
 
-                $textNode = $textNode->nextSibling;
-                if (trim($textNode->nodeValue) == '') {
-                    $textNode = $textNode->nextSibling;
-                }
-            }
-//            $combinedText = str_replace("\r\n", '', $combinedText);
-//            $combinedText = str_replace("\n\n", "\n", $combinedText);
+            $this->entityManager->persist($content);
 
-            $combinedText = strip_tags($combinedText, Content::ALLOWED_HTML_TAGS);
-
-
-            // references
-            $entryNotes = null;
-            $listNodes = $x->query('//ol');
-            if (count($listNodes) > 0) {
-                /* @var DomElement $referencesListNode */
-                $referencesListNode = $listNodes[0];
-                $refNumber = 0;
-
-                foreach ($referencesListNode->childNodes as $childNode) {
-                    if (trim($childNode->nodeValue) == '') {
-                        continue;
-                    }
-
-                    $sanitizedNodeValue = str_replace('↑', '', $childNode->nodeValue);
-
-                    $entryNotes .= ++$refNumber . $sanitizedNodeValue . '<br>';
-                }
-            }
-
-
-            $tocEntry = $this->tocEntryRepository->findOneBy(['work' => $lettersWork, 'label' => $fullTocLabel]);
-
-            if (!$tocEntry) {
-                $tocEntry = new TocEntry();
-                $tocEntry->setWork($lettersWork);
-                $tocEntry->setLabel($fullTocLabel);
-                $tocEntry->setSortOrder($letterNr);
-                $this->entityManager->persist($tocEntry);
-            }
-
-            $newContent = new Content();
-            $newContent->setContent($combinedText);
-            $newContent->setEdition($edition);
-            $newContent->setTocEntry($tocEntry);
-            $newContent->setNotes($entryNotes);
-            $newContent->setContentType(Content::CONTENT_TYPE_HTML);
-
-            $this->entityManager->persist($newContent);
+            // usleep(100000);
         }
 
         $this->entityManager->flush();
