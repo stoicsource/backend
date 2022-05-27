@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\ContentRepository;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\Accessor;
 use JMS\Serializer\Annotation\Groups;
 use JMS\Serializer\Annotation\SerializedName;
 
@@ -14,6 +15,11 @@ class Content
 {
     const CONTENT_TYPE_TEXT = 1;
     const CONTENT_TYPE_HTML = 2;
+
+    const CONTENT_TYPE_NAMES = [
+      self::CONTENT_TYPE_TEXT => 'text',
+      self::CONTENT_TYPE_HTML => 'html'
+    ];
 
     const ALLOWED_HTML_TAGS = ['<p>', '<blockquote>', '<sup>', '<b>'];
 
@@ -67,10 +73,15 @@ class Content
     /**
      * @ORM\Column(type="smallint")
      *
-     * @Groups({"content_details"})
-     * @SerializedName("contentType")
      */
     private $contentType;
+
+    /**
+     * @Groups({"content_details"})
+     * @SerializedName("contentType")
+     * @Accessor(getter="getFormattedContentType")
+     */
+    private $formattedContentType;
 
     public function getId(): ?int
     {
@@ -147,5 +158,13 @@ class Content
         $this->contentType = $contentType;
 
         return $this;
+    }
+
+    public function getFormattedContentType(): string
+    {
+        if (array_key_exists($this->contentType, self::CONTENT_TYPE_NAMES)) {
+            return self::CONTENT_TYPE_NAMES[$this->contentType];
+        }
+        return '';
     }
 }
