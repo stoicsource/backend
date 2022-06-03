@@ -26,7 +26,6 @@ class WorkController extends AbstractFOSRestController
     {
         $works = $workRepository->findAll();
         $view = $this->view($works, 200);
-        // $view->getContext()->setGroups(['work_details']);
         $view->getContext()->setGroups(['work_list']);
 
         $response = $this->handleView($view);

@@ -1,15 +1,11 @@
 <?php
 
-
 namespace App\Controller;
 
-
 use App\Repository\ContentRepository;
-use App\Repository\WorkRepository;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations\QueryParam;
 use FOS\RestBundle\Controller\Annotations\Route;
-use FOS\RestBundle\Request\ParamFetcher;
 use FOS\RestBundle\Request\ParamFetcherInterface;
 
 /**
