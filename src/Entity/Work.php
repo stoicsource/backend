@@ -49,24 +49,24 @@ class Work
     private $tocEntries;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Author::class, inversedBy="works")
-     *
-     * @Groups({"work_details", "work_list"})
-     */
-    private $authors;
-
-    /**
      * @ORM\Column(type="string", length=255, unique=true)
      *
      * @Groups({"work_details", "work_list"})
      */
     private $urlSlug;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Author::class, inversedBy="works")
+     * @ORM\JoinColumn(nullable=false)
+     *
+     * @Groups({"work_details", "work_list"})
+     */
+    private $author;
+
     public function __construct()
     {
         $this->editions = new ArrayCollection();
         $this->tocEntries = new ArrayCollection();
-        $this->authors = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -146,30 +146,6 @@ class Work
         return $this;
     }
 
-    /**
-     * @return Collection|Author[]
-     */
-    public function getAuthors(): Collection
-    {
-        return $this->authors;
-    }
-
-    public function addAuthor(Author $author): self
-    {
-        if (!$this->authors->contains($author)) {
-            $this->authors[] = $author;
-        }
-
-        return $this;
-    }
-
-    public function removeAuthor(Author $author): self
-    {
-        $this->authors->removeElement($author);
-
-        return $this;
-    }
-
     public function getUrlSlug(): ?string
     {
         return $this->urlSlug;
@@ -178,6 +154,18 @@ class Work
     public function setUrlSlug(string $urlSlug): self
     {
         $this->urlSlug = $urlSlug;
+
+        return $this;
+    }
+
+    public function getAuthor(): ?Author
+    {
+        return $this->author;
+    }
+
+    public function setAuthor(?Author $author): self
+    {
+        $this->author = $author;
 
         return $this;
     }

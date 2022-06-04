@@ -35,13 +35,6 @@ class Edition
     private $name;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Author::class, mappedBy="editions")
-     *
-     * @Groups({"work_details"})
-     */
-    private $authors;
-
-    /**
      * @ORM\ManyToOne(targetEntity=Work::class, inversedBy="editions")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
@@ -76,9 +69,16 @@ class Edition
      */
     private $quality;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Author::class, inversedBy="editions")
+     * @ORM\JoinColumn(nullable=false)
+     *
+     * @Groups({"work_details"})
+     */
+    private $author;
+
     public function __construct()
     {
-        $this->authors = new ArrayCollection();
         $this->contents = new ArrayCollection();
     }
 
@@ -95,33 +95,6 @@ class Edition
     public function setName(string $name): self
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Author[]
-     */
-    public function getAuthors(): Collection
-    {
-        return $this->authors;
-    }
-
-    public function addAuthor(Author $author): self
-    {
-        if (!$this->authors->contains($author)) {
-            $this->authors[] = $author;
-            $author->addEdition($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAuthor(Author $author): self
-    {
-        if ($this->authors->removeElement($author)) {
-            $author->removeEdition($this);
-        }
 
         return $this;
     }
@@ -212,6 +185,18 @@ class Edition
     public function setQuality(int $quality): self
     {
         $this->quality = $quality;
+
+        return $this;
+    }
+
+    public function getAuthor(): ?Author
+    {
+        return $this->author;
+    }
+
+    public function setAuthor(?Author $author): self
+    {
+        $this->author = $author;
 
         return $this;
     }
