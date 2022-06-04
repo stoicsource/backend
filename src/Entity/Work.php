@@ -42,6 +42,7 @@ class Work
 
     /**
      * @ORM\OneToMany(targetEntity=TocEntry::class, mappedBy="work")
+     * @ORM\OrderBy({"sortOrder" = "ASC"})
      *
      * @Groups({"work_details"})
      * @SerializedName("tocEntries")
