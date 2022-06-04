@@ -71,6 +71,8 @@ class Edition
 
     /**
      * @ORM\Column(type="smallint")
+     *
+     * @Groups({"work_details"})
      */
     private $quality;
 
