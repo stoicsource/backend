@@ -13,6 +13,11 @@ use JMS\Serializer\Annotation\Groups;
  */
 class Edition
 {
+    public const QUALITY_POOR = 1; // poor, formatting faulty
+    public const QUALITY_SOLID = 6; // solid, no apparent faults
+    public const QUALITY_EDITED = 8; // flawless, edited manually if needed
+    public const QUALITY_EXCELLENT = 10; // flawless, uses html formatting if necessary
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -63,6 +68,11 @@ class Edition
      * @ORM\Column(type="string", length=3)
      */
     private $language;
+
+    /**
+     * @ORM\Column(type="smallint")
+     */
+    private $quality;
 
     public function __construct()
     {
@@ -188,6 +198,18 @@ class Edition
     public function setLanguage(string $language): self
     {
         $this->language = $language;
+
+        return $this;
+    }
+
+    public function getQuality(): ?int
+    {
+        return $this->quality;
+    }
+
+    public function setQuality(int $quality): self
+    {
+        $this->quality = $quality;
 
         return $this;
     }
