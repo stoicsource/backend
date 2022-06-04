@@ -31,16 +31,6 @@ class Author
     private $name;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Edition::class, inversedBy="authors")
-     */
-    private $editions;
-
-    /**
-     * @ORM\ManyToMany(targetEntity=Work::class, mappedBy="authors")
-     */
-    private $works;
-
-    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      *
      * @Groups({"work_details", "work_list"})
@@ -55,10 +45,20 @@ class Author
      */
     private $urlSlug;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Work::class, mappedBy="author")
+     */
+    private $works;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Edition::class, mappedBy="author")
+     */
+    private $editions;
+
     public function __construct()
     {
-        $this->editions = new ArrayCollection();
         $this->works = new ArrayCollection();
+        $this->editions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -74,57 +74,6 @@ class Author
     public function setName(string $name): self
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Edition[]
-     */
-    public function getEditions(): Collection
-    {
-        return $this->editions;
-    }
-
-    public function addEdition(Edition $edition): self
-    {
-        if (!$this->editions->contains($edition)) {
-            $this->editions[] = $edition;
-        }
-
-        return $this;
-    }
-
-    public function removeEdition(Edition $edition): self
-    {
-        $this->editions->removeElement($edition);
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Work[]
-     */
-    public function getWorks(): Collection
-    {
-        return $this->works;
-    }
-
-    public function addWork(Work $work): self
-    {
-        if (!$this->works->contains($work)) {
-            $this->works[] = $work;
-            $work->addAuthor($this);
-        }
-
-        return $this;
-    }
-
-    public function removeWork(Work $work): self
-    {
-        if ($this->works->removeElement($work)) {
-            $work->removeAuthor($this);
-        }
 
         return $this;
     }
@@ -149,6 +98,66 @@ class Author
     public function setUrlSlug(string $urlSlug): self
     {
         $this->urlSlug = $urlSlug;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Work>
+     */
+    public function getWorks(): Collection
+    {
+        return $this->works;
+    }
+
+    public function addWork(Work $work): self
+    {
+        if (!$this->works->contains($work)) {
+            $this->works[] = $work;
+            $work->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWork(Work $work): self
+    {
+        if ($this->works->removeElement($work)) {
+            // set the owning side to null (unless already changed)
+            if ($work->getAuthor() === $this) {
+                $work->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Edition>
+     */
+    public function getEditions(): Collection
+    {
+        return $this->editions;
+    }
+
+    public function addEdition(Edition $edition): self
+    {
+        if (!$this->editions->contains($edition)) {
+            $this->editions[] = $edition;
+            $edition->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEdition(Edition $edition): self
+    {
+        if ($this->editions->removeElement($edition)) {
+            // set the owning side to null (unless already changed)
+            if ($edition->getAuthor() === $this) {
+                $edition->setAuthor(null);
+            }
+        }
 
         return $this;
     }
