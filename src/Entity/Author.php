@@ -55,6 +55,21 @@ class Author
      */
     private $editions;
 
+    /**
+     * @ORM\Column(type="string", length=32, nullable=true)
+     */
+    private $yearsAlive;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $summary;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $moreInfoUrl;
+
     public function __construct()
     {
         $this->works = new ArrayCollection();
@@ -158,6 +173,42 @@ class Author
                 $edition->setAuthor(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getYearsAlive(): ?string
+    {
+        return $this->yearsAlive;
+    }
+
+    public function setYearsAlive(?string $yearsAlive): self
+    {
+        $this->yearsAlive = $yearsAlive;
+
+        return $this;
+    }
+
+    public function getSummary(): ?string
+    {
+        return $this->summary;
+    }
+
+    public function setSummary(?string $summary): self
+    {
+        $this->summary = $summary;
+
+        return $this;
+    }
+
+    public function getMoreInfoUrl(): ?string
+    {
+        return $this->moreInfoUrl;
+    }
+
+    public function setMoreInfoUrl(?string $moreInfoUrl): self
+    {
+        $this->moreInfoUrl = $moreInfoUrl;
 
         return $this;
     }
