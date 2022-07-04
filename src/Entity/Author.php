@@ -19,21 +19,21 @@ class Author
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      *
-     * @Groups({"work_details", "work_list"})
+     * @Groups({"work_details", "work_list", "edition_details"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      *
-     * @Groups({"work_details", "work_list"})
+     * @Groups({"work_details", "work_list", "edition_details"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      *
-     * @Groups({"work_details", "work_list"})
+     * @Groups({"work_details", "work_list", "edition_details"})
      * @SerializedName("shortName")
      */
     private $shortName;
@@ -41,7 +41,7 @@ class Author
     /**
      * @ORM\Column(type="string", length=255, unique=true)
      *
-     * @Groups({"work_details", "work_list"})
+     * @Groups({"work_details", "work_list", "edition_details"})
      */
     private $urlSlug;
 
@@ -57,16 +57,24 @@ class Author
 
     /**
      * @ORM\Column(type="string", length=32, nullable=true)
+     *
+     * @Groups({"work_details", "edition_details"})
+     * @SerializedName("yearsAlive")
      */
     private $yearsAlive;
 
     /**
      * @ORM\Column(type="text", nullable=true)
+     *
+     * @Groups({"work_details", "edition_details"})
      */
     private $summary;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     *
+     * @Groups({"work_details", "edition_details"})
+     * @SerializedName("moreInfoUrl")
      */
     private $moreInfoUrl;
 

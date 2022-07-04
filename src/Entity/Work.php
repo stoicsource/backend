@@ -22,14 +22,14 @@ class Work
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      *
-     * @Groups({"work_details", "work_list"})
+     * @Groups({"work_details", "work_list", "edition_details"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      *
-     * @Groups({"work_details", "work_list"})
+     * @Groups({"work_details", "work_list", "edition_details"})
      */
     private $name;
 
@@ -52,7 +52,7 @@ class Work
     /**
      * @ORM\Column(type="string", length=255, unique=true)
      *
-     * @Groups({"work_details", "work_list"})
+     * @Groups({"work_details", "work_list", "edition_details"})
      */
     private $urlSlug;
 
