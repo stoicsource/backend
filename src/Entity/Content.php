@@ -2,6 +2,9 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\ContentRepository;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation\Accessor;
@@ -11,6 +14,11 @@ use JMS\Serializer\Annotation\SerializedName;
 /**
  * @ORM\Entity(repositoryClass=ContentRepository::class)
  */
+#[ApiResource(
+    collectionOperations: ['get'],
+    itemOperations: ['get'],
+)]
+#[ApiFilter(SearchFilter::class, properties: ['tocEntry' => 'exact', 'edition' => 'exact'])]
 class Content
 {
     const CONTENT_TYPE_TEXT = 1;
