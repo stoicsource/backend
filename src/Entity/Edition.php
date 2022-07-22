@@ -2,6 +2,9 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\EditionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -11,6 +14,11 @@ use JMS\Serializer\Annotation\Groups;
 /**
  * @ORM\Entity(repositoryClass=EditionRepository::class)
  */
+#[ApiResource(
+    collectionOperations: ['get'],
+    itemOperations: ['get'],
+)]
+#[ApiFilter(SearchFilter::class, properties: ['work' => 'exact'])]
 class Edition
 {
     public const QUALITY_POOR = 1; // poor, formatting faulty
