@@ -12,3 +12,4 @@ api_platform:
         cache_headers:
             max_age: 86400
             vary: [ 'Content-Type', 'Origin', 'Access-Control-Allow-Origin' ]
+            etag: false
