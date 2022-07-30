@@ -7,9 +7,6 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\ContentRepository;
 use Doctrine\ORM\Mapping as ORM;
-use JMS\Serializer\Annotation\Accessor;
-use JMS\Serializer\Annotation\Groups;
-use JMS\Serializer\Annotation\SerializedName;
 
 /**
  * @ORM\Entity(repositoryClass=ContentRepository::class)
@@ -36,7 +33,6 @@ class Content
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      *
-     * @Groups({"content_details"})
      */
     private $id;
 
@@ -44,8 +40,6 @@ class Content
      * @ORM\ManyToOne(targetEntity=TocEntry::class, inversedBy="contents")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      *
-     * @Groups({"content_details"})
-     * @SerializedName("tocEntry")
      */
     private $tocEntry;
 
@@ -53,28 +47,24 @@ class Content
      * @ORM\ManyToOne(targetEntity=Edition::class, inversedBy="contents")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      *
-     * @Groups({"content_details"})
      */
     private $edition;
 
     /**
      * @ORM\Column(type="text")
      *
-     * @Groups({"content_details"})
      */
     private $content;
 
     /**
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Groups({"content_details"})
      */
     private $notes;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      *
-     * @Groups({"content_details"})
      */
     private $title;
 
@@ -83,13 +73,6 @@ class Content
      *
      */
     private $contentType;
-
-    /**
-     * @Groups({"content_details"})
-     * @SerializedName("contentType")
-     * @Accessor(getter="getFormattedContentType")
-     */
-    private $formattedContentType;
 
     public function getId(): ?int
     {
@@ -166,13 +149,5 @@ class Content
         $this->contentType = $contentType;
 
         return $this;
-    }
-
-    public function getFormattedContentType(): string
-    {
-        if (array_key_exists($this->contentType, self::CONTENT_TYPE_NAMES)) {
-            return self::CONTENT_TYPE_NAMES[$this->contentType];
-        }
-        return '';
     }
 }

@@ -7,10 +7,6 @@ use App\Repository\WorkRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use JMS\Serializer\Annotation\ExclusionPolicy;
-use JMS\Serializer\Annotation\Expose;
-use JMS\Serializer\Annotation\Groups;
-use JMS\Serializer\Annotation\SerializedName;
 
 /**
  * @ORM\Entity(repositoryClass=WorkRepository::class)
@@ -27,21 +23,18 @@ class Work
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      *
-     * @Groups({"work_details", "work_list", "edition_details"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      *
-     * @Groups({"work_details", "work_list", "edition_details"})
      */
     private $name;
 
     /**
      * @ORM\OneToMany(targetEntity=Edition::class, mappedBy="work")
      *
-     * @Groups({"work_details"})
      */
     private $editions;
 
@@ -49,15 +42,12 @@ class Work
      * @ORM\OneToMany(targetEntity=TocEntry::class, mappedBy="work")
      * @ORM\OrderBy({"sortOrder" = "ASC"})
      *
-     * @Groups({"work_details"})
-     * @SerializedName("tocEntries")
      */
     private $tocEntries;
 
     /**
      * @ORM\Column(type="string", length=255, unique=true)
      *
-     * @Groups({"work_details", "work_list", "edition_details"})
      */
     private $urlSlug;
 
@@ -65,7 +55,6 @@ class Work
      * @ORM\ManyToOne(targetEntity=Author::class, inversedBy="works")
      * @ORM\JoinColumn(nullable=false)
      *
-     * @Groups({"work_details", "work_list"})
      */
     private $author;
 

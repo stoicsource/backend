@@ -9,7 +9,6 @@ use App\Repository\TocEntryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use JMS\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=TocEntryRepository::class)
@@ -26,7 +25,6 @@ class TocEntry
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      *
-     * @Groups({"work_details", "content_details"})
      */
     private $id;
 
@@ -44,14 +42,12 @@ class TocEntry
     /**
      * @ORM\Column(type="string", length=255)
      *
-     * @Groups({"work_details"})
      */
     private $label;
 
     /**
      * @ORM\Column(type="integer")
      *
-     * @Groups({"work_details"})
      */
     private $sortOrder;
 

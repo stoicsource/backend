@@ -9,7 +9,6 @@ use App\Repository\EditionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use JMS\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=EditionRepository::class)
@@ -31,14 +30,12 @@ class Edition
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      *
-     * @Groups({"work_details", "content_details", "edition_details"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      *
-     * @Groups({"work_details", "edition_details"})
      */
     private $name;
 
@@ -46,7 +43,6 @@ class Edition
      * @ORM\ManyToOne(targetEntity=Work::class, inversedBy="editions")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      *
-     * @Groups({"edition_details"})
      */
     private $work;
 
@@ -58,28 +54,24 @@ class Edition
     /**
      * @ORM\Column(type="string", length=12, nullable=true)
      *
-     * @Groups({"work_details", "edition_details"})
      */
     private $year;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      *
-     * @Groups({"edition_details"})
      */
     private $source;
 
     /**
      * @ORM\Column(type="string", length=3)
      *
-     * @Groups({"edition_details"})
      */
     private $language;
 
     /**
      * @ORM\Column(type="smallint")
      *
-     * @Groups({"work_details", "edition_details"})
      */
     private $quality;
 
@@ -87,14 +79,12 @@ class Edition
      * @ORM\ManyToOne(targetEntity=Author::class, inversedBy="editions")
      * @ORM\JoinColumn(nullable=false)
      *
-     * @Groups({"work_details", "edition_details"})
      */
     private $author;
 
     /**
      * @ORM\Column(type="json", nullable=true)
      *
-     * @Groups({"work_details", "edition_details"})
      */
     private $contributor = [];
 
