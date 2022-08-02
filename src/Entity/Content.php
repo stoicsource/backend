@@ -14,6 +14,10 @@ use Doctrine\ORM\Mapping as ORM;
 #[ApiResource(
     collectionOperations: ['get'],
     itemOperations: ['get'],
+    attributes: [
+        'pagination_enabled' => true,
+        'pagination_items_per_page' => 30
+    ]
 )]
 #[ApiFilter(SearchFilter::class, properties: ['tocEntry' => 'exact', 'edition' => 'exact'])]
 class Content
