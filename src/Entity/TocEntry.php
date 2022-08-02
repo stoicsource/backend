@@ -15,13 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 #[ApiResource(
     collectionOperations: ['get'],
-    itemOperations: ['get'],
-    attributes: [
-        'pagination_enabled' => true,
-        'pagination_client_items_per_page' => true,
-        'pagination_items_per_page' => 30,
-        'pagination_maximum_items_per_page' => 100
-    ]
+    itemOperations: ['get']
 )]
 #[ApiFilter(SearchFilter::class, properties: ['work' => 'exact'])]
 class TocEntry
