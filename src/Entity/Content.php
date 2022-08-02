@@ -7,6 +7,8 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\ContentRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 
 /**
  * @ORM\Entity(repositoryClass=ContentRepository::class)
@@ -17,6 +19,9 @@ use Doctrine\ORM\Mapping as ORM;
     attributes: [
         'pagination_enabled' => true,
         'pagination_items_per_page' => 30
+    ],
+    normalizationContext: [
+        'groups' => ['read']
     ]
 )]
 #[ApiFilter(SearchFilter::class, properties: ['tocEntry' => 'exact', 'edition' => 'exact'])]
@@ -78,11 +83,13 @@ class Content
      */
     private $contentType;
 
+    #[Groups(["read"])]
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    #[Groups(["read"])]
     public function getTocEntry(): ?TocEntry
     {
         return $this->tocEntry;
@@ -95,6 +102,7 @@ class Content
         return $this;
     }
 
+    #[Groups(["read"])]
     public function getEdition(): ?Edition
     {
         return $this->edition;
@@ -107,6 +115,7 @@ class Content
         return $this;
     }
 
+    #[Groups(["read"])]
     public function getContent(): ?string
     {
         return $this->content;
@@ -119,6 +128,7 @@ class Content
         return $this;
     }
 
+    #[Groups(["read"])]
     public function getNotes(): ?string
     {
         return $this->notes;
@@ -131,6 +141,7 @@ class Content
         return $this;
     }
 
+    #[Groups(["read"])]
     public function getTitle(): ?string
     {
         return $this->title;
@@ -153,5 +164,15 @@ class Content
         $this->contentType = $contentType;
 
         return $this;
+    }
+
+    #[Groups(["read"])]
+    #[SerializedName("contentType")]
+    public function getFormattedContentType(): string
+    {
+        if (array_key_exists($this->contentType, self::CONTENT_TYPE_NAMES)) {
+            return self::CONTENT_TYPE_NAMES[$this->contentType];
+        }
+        return '';
     }
 }
