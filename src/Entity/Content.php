@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use App\Filter\RandomOrderFilter;
 use App\Repository\ContentRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -18,13 +19,16 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
     itemOperations: ['get'],
     attributes: [
         'pagination_enabled' => true,
-        'pagination_items_per_page' => 30
+        'pagination_client_items_per_page' => true,
+        'pagination_items_per_page' => 30,
+        'pagination_maximum_items_per_page' => 100
     ],
     normalizationContext: [
         'groups' => ['read']
     ]
 )]
 #[ApiFilter(SearchFilter::class, properties: ['tocEntry' => 'exact', 'edition' => 'exact'])]
+#[ApiFilter(RandomOrderFilter::class)]
 class Content
 {
     const CONTENT_TYPE_TEXT = 1;
