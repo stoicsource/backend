@@ -3,7 +3,10 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Work;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 
 class WorkCrudController extends AbstractCrudController
 {
@@ -12,14 +15,19 @@ class WorkCrudController extends AbstractCrudController
         return Work::class;
     }
 
-    /*
+    public function configureCrud(Crud $crud): Crud
+    {
+        return $crud
+            ->showEntityActionsInlined()
+            ;
+    }
+
     public function configureFields(string $pageName): iterable
     {
         return [
-            IdField::new('id'),
-            TextField::new('title'),
-            TextEditorField::new('description'),
+            Field::new('name'),
+            AssociationField::new('author'),
+            Field::new('urlSlug'),
         ];
     }
-    */
 }

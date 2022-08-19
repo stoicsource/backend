@@ -77,6 +77,10 @@ class Author
         $this->editions = new ArrayCollection();
     }
 
+    public function __toString(){
+        return $this->shortName ?? $this->name;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
