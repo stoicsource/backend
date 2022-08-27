@@ -88,6 +88,21 @@ class Edition
      */
     private $contributor = [];
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $hasContent;
+
+    /**
+     * @ORM\Column(type="text")
+     */
+    private $copyright;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $internalComment;
+
     public function __construct()
     {
         $this->contents = new ArrayCollection();
@@ -224,6 +239,42 @@ class Edition
     public function setContributor(?array $contributor): self
     {
         $this->contributor = $contributor;
+
+        return $this;
+    }
+
+    public function getHasContent(): ?bool
+    {
+        return $this->hasContent;
+    }
+
+    public function setHasContent(bool $hasContent): self
+    {
+        $this->hasContent = $hasContent;
+
+        return $this;
+    }
+
+    public function getCopyright(): ?string
+    {
+        return $this->copyright;
+    }
+
+    public function setCopyright(string $copyright): self
+    {
+        $this->copyright = $copyright;
+
+        return $this;
+    }
+
+    public function getInternalComment(): ?string
+    {
+        return $this->internalComment;
+    }
+
+    public function setInternalComment(?string $internalComment): self
+    {
+        $this->internalComment = $internalComment;
 
         return $this;
     }

@@ -30,9 +30,12 @@ class EditionCrudController extends AbstractCrudController
             Field::new('year'),
             Field::new('name'),
             AssociationField::new('author'),
+            Field::new('hasContent'),
             Field::new('language'),
             Field::new('quality'),
             Field::new('source')->hideOnIndex(),
+            Field::new('copyright')->hideOnIndex(),
+            Field::new('internalComment')->hideOnIndex(),
             // Field::new('contributor')->hideOnIndex() <- json
         ];
     }
