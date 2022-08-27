@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Edition;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
@@ -34,5 +35,13 @@ class EditionCrudController extends AbstractCrudController
             Field::new('source')->hideOnIndex(),
             // Field::new('contributor')->hideOnIndex() <- json
         ];
+    }
+
+    public function configureFilters(Filters $filters): Filters
+    {
+        return $filters
+            ->add('work')
+            ->add('author')
+            ;
     }
 }
