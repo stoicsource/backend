@@ -39,6 +39,7 @@ class ContentCrudController extends AbstractCrudController
     {
         return $filters
             ->add('edition')
+            ->add('tocEntry')
             ;
     }
 }

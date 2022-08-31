@@ -109,7 +109,7 @@ class Edition
     }
 
     public function __toString(){
-        return $this->name;
+        return $this->work . ', ' . $this->author . '(' . $this->year. ')';
     }
 
     public function getId(): ?int
