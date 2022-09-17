@@ -4,8 +4,9 @@
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
-        "php": ">=8.0",
+        "php": ">=8.1",
         "ext-ctype": "*",
+        "ext-dom": "*",
         "ext-iconv": "*",
         "api-platform/core": "^2.6",
         "beberlei/doctrineextensions": "^1.3",
