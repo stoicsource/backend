@@ -15,8 +15,8 @@ class NodeConverterTest extends TestCase
         $baseNode = $doc->appendChild($doc->createElement('p'));
         $baseNode->appendChild($doc->createElement('a'));
 
-        $converter = new NodeConverter('a', null, 'sup', null);
-        $converter->convertAllChildren($baseNode);
+        $converter = new NodeConverter();
+        $converter->convertAllChildren($baseNode, 'a', null, 'sup', null);
 
         $this->assertEquals(0, $baseNode->getElementsByTagName('a')->count());
     }
@@ -27,8 +27,8 @@ class NodeConverterTest extends TestCase
         $baseNode = $doc->appendChild($doc->createElement('p'));
         $baseNode->appendChild($doc->createElement('a'));
 
-        $converter = new NodeConverter('invalid', null, 'somethingelse', null);
-        $converter->convertAllChildren($baseNode);
+        $converter = new NodeConverter();
+        $converter->convertAllChildren($baseNode, 'invalid', null, 'somethingelse', null);
 
         $this->assertEquals(1, $baseNode->getElementsByTagName('a')->count());
     }
@@ -40,8 +40,8 @@ class NodeConverterTest extends TestCase
         $linkNode = $baseNode->appendChild($doc->createElement('a'));
         $linkNode->setAttribute('ref-note', 123);
 
-        $converter = new NodeConverter('a', 'ref-note', 'sup', 'footnote');
-        $converter->convertAllChildren($baseNode);
+        $converter = new NodeConverter();
+        $converter->convertAllChildren($baseNode, 'a', 'ref-note', 'sup', 'footnote');
 
         $supNodes = $baseNode->getElementsByTagName('sup');
         $this->assertEquals(1, $supNodes->count());
@@ -58,8 +58,8 @@ class NodeConverterTest extends TestCase
         $linkNode = $baseNode->appendChild($doc->createElement('a', 456));
         $linkNode->setAttribute('ref-note', 123);
 
-        $converter = new NodeConverter('a', null, 'sup', 'footnote');
-        $converter->convertAllChildren($baseNode);
+        $converter = new NodeConverter();
+        $converter->convertAllChildren($baseNode, 'a', null, 'sup', 'footnote');
 
         $supNodes = $baseNode->getElementsByTagName('sup');
         $this->assertEquals(1, $supNodes->count());
@@ -67,6 +67,23 @@ class NodeConverterTest extends TestCase
         assert($supNode instanceof DOMElement);
         $supAttributeValue = $supNode->getAttribute('footnote');
         $this->assertEquals(456, $supAttributeValue);
+    }
+
+    public function testConvertsNodeValueToAttributeAndKeepsNodeValue()
+    {
+        $doc = new DOMDocument();
+        $baseNode = $doc->appendChild($doc->createElement('p'));
+        $linkNode = $baseNode->appendChild($doc->createElement('a', 456));
+        $linkNode->setAttribute('ref-note', 123);
+
+        $converter = new NodeConverter();
+        $converter->convertAllChildren($baseNode, 'a', null, 'sup', 'footnote');
+
+        $supNodes = $baseNode->getElementsByTagName('sup');
+        $this->assertEquals(1, $supNodes->count());
+        $supNode = $supNodes[0];
+        assert($supNode instanceof DOMElement);
+        $this->assertEquals(456, $supNode->nodeValue);
     }
 
 

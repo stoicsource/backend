@@ -6,27 +6,21 @@ use DOMElement;
 
 class NodeConverter
 {
-    public function __construct(
-        protected string $fromTag,
-        protected ?string $fromAttribute,
-        protected string $toTag,
-        protected ?string $toAttribute
-    )
+    public function convertAllChildren(DOMElement $baseNode, string $fromTag, ?string $fromAttribute, string $toTag, ?string $toAttribute): void
     {
-    }
-
-    public function convertAllChildren(DOMElement $baseNode): void
-    {
-        $linkNodes = $baseNode->getElementsByTagName($this->fromTag);
+        $linkNodes = $baseNode->getElementsByTagName($fromTag);
         while (count($linkNodes) > 0) {
             $linkNode = $linkNodes[0];
             assert($linkNode instanceof DOMElement);
-            $attributeValue = $this->fromAttribute ? $linkNode->getAttribute($this->fromAttribute) : $linkNode->nodeValue;
-            $supElement = $baseNode->ownerDocument->createElement($this->toTag);
-            if ($this->toAttribute) {
-                $supElement->setAttribute($this->toAttribute, $attributeValue);
+            $attributeValue = $fromAttribute ? $linkNode->getAttribute($fromAttribute) : $linkNode->nodeValue;
+            $supElement = $baseNode->ownerDocument->createElement($toTag);
+            if ($toAttribute) {
+                $supElement->setAttribute($toAttribute, $attributeValue);
             } else {
                 $supElement->nodeValue = $attributeValue;
+            }
+            if ($linkNode->nodeValue > '') {
+                $supElement->nodeValue = $linkNode->nodeValue;
             }
             $linkNode->parentNode->replaceChild($supElement, $linkNode);
         }
