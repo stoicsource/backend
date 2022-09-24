@@ -8,16 +8,17 @@ use App\Entity\Import\ChapterInterface;
 use DOMDocument;
 use DOMElement;
 use Exception;
-use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
-use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
 
 class ChapterConverter
 {
     private string $targetNoteTag = '';
     private string $targetNoteAttribute = '';
+    private array $allowedTagsAndAttributesTitle = [];
+    private array $allowedTagsAndAttributesContent = [];
 
     public function __construct(
-        public NodeConverter $nodeConverter
+        public NodeConverter $nodeConverter,
+        public HtmlCleaner $htmlCleaner
     )
     {
     }
@@ -41,12 +42,8 @@ class ChapterConverter
             $idMap->renumberNoteIds($titleBaseNode, $this->targetNoteTag, $this->targetNoteAttribute);
 
             $titleHtml = $titleDoc->saveHTML($titleBaseNode);
-            $config = (new HtmlSanitizerConfig())
-                ->allowElement('sup', [$this->targetNoteAttribute]);
-            //$sanitizer = new HtmlSanitizer($config);
-            //$titleHtml = $sanitizer->sanitize($titleHtml);
-
-            $titleHtml = strip_tags($titleHtml, ['sup']);
+            $this->htmlCleaner->setAllowedTagsAndAttributes($this->allowedTagsAndAttributesTitle);
+            $titleHtml = $this->htmlCleaner->clean($titleHtml);
 
             $resultContent->setTitle($titleHtml);
         }
@@ -61,7 +58,8 @@ class ChapterConverter
             $idMap->renumberNoteIds($contentBaseNode, $this->targetNoteTag, $this->targetNoteAttribute);
 
             $contentHtml = $contentDoc->saveHTML($contentBaseNode);
-            $contentHtml = strip_tags($contentHtml, Content::ALLOWED_HTML_TAGS);
+            $this->htmlCleaner->setAllowedTagsAndAttributes($this->allowedTagsAndAttributesContent);
+            $contentHtml = $this->htmlCleaner->clean($contentHtml);
 
             $resultContent->setContent($contentHtml);
             $resultContent->setContentFormat(Content::CONTENT_TYPE_HTML);
@@ -109,6 +107,26 @@ class ChapterConverter
     public function setTargetNoteAttribute(string $targetNoteAttribute): void
     {
         $this->targetNoteAttribute = $targetNoteAttribute;
+    }
+
+    public function getAllowedTagsAndAttributesTitle(): array
+    {
+        return $this->allowedTagsAndAttributesTitle;
+    }
+
+    public function setAllowedTagsAndAttributesTitle(array $allowedTagsAndAttributesTitle): void
+    {
+        $this->allowedTagsAndAttributesTitle = $allowedTagsAndAttributesTitle;
+    }
+
+    public function getAllowedTagsAndAttributesContent(): array
+    {
+        return $this->allowedTagsAndAttributesContent;
+    }
+
+    public function setAllowedTagsAndAttributesContent(array $allowedTagsAndAttributesContent): void
+    {
+        $this->allowedTagsAndAttributesContent = $allowedTagsAndAttributesContent;
     }
 
 }

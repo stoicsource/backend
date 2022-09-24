@@ -7,6 +7,7 @@ use App\Entity\Import\ExtractedChapter;
 use App\Repository\BasicFootnoteRepository;
 use App\Service\Import\ChapterConverter;
 use App\Service\Import\FootnoteReferenceCollector;
+use App\Service\Import\HtmlCleaner;
 use App\Service\Import\NodeConverter;
 use PHPUnit\Framework\TestCase;
 
@@ -16,7 +17,7 @@ class ChapterConverterTest extends TestCase
     {
         $extractedChapter = $this->getExtractedChapter('test title', '');
 
-        $converter = new ChapterConverter(new NodeConverter());
+        $converter = $this->getChapterConverter();
         $contentEntity = $converter->convert($extractedChapter);
         assert($contentEntity instanceof Content);
         $this->assertEquals('test title', $contentEntity->getTitle());
@@ -26,7 +27,7 @@ class ChapterConverterTest extends TestCase
     {
         $extractedChapter = $this->getExtractedChapter('', 'test content');
 
-        $converter = new ChapterConverter(new NodeConverter());
+        $converter = $this->getChapterConverter();
         $contentEntity = $converter->convert($extractedChapter);
         assert($contentEntity instanceof Content);
 
@@ -45,13 +46,13 @@ class ChapterConverterTest extends TestCase
         $footnoteRepo = $this->getFootnoteRepo([1 => 'test', 2 => 'test']);
         $extractedChapter->extractFootnotes(new FootnoteReferenceCollector(), $footnoteRepo);
 
-        $converter = new ChapterConverter(new NodeConverter());
+        $converter = $this->getChapterConverter();
         $converter->setTargetNoteTag('sup');
-        $converter->setTargetNoteAttribute('data-note-reference');
+        $converter->setTargetNoteAttribute('data-footnote-reference');
         $contentEntity = $converter->convert($extractedChapter);
 
-        $this->assertEquals('test <sup data-note-reference="1">1</sup> title', $contentEntity->getTitle());
-        $this->assertEquals('<p>test <sup data-note-reference="2">2</sup> content</p>', $contentEntity->getContent());
+        $this->assertEquals('test <sup data-footnote-reference="1">1</sup> title', $contentEntity->getTitle());
+        $this->assertEquals('<p>test <sup data-footnote-reference="2">2</sup> content</p>', $contentEntity->getContent());
     }
 
     public function testRenumbersNotes()
@@ -66,13 +67,13 @@ class ChapterConverterTest extends TestCase
         $footnoteRepo = $this->getFootnoteRepo([8 => 'test', 12 => 'test']);
         $extractedChapter->extractFootnotes(new FootnoteReferenceCollector(), $footnoteRepo);
 
-        $converter = new ChapterConverter(new NodeConverter());
+        $converter = $this->getChapterConverter();
         $converter->setTargetNoteTag('sup');
-        $converter->setTargetNoteAttribute('data-note-reference');
+        $converter->setTargetNoteAttribute('data-footnote-reference');
         $contentEntity = $converter->convert($extractedChapter);
 
-        $this->assertEquals('test <sup data-note-reference="1">1</sup> title', $contentEntity->getTitle());
-        $this->assertEquals('<p>test <sup data-note-reference="2">2</sup> content</p>', $contentEntity->getContent());
+        $this->assertEquals('test <sup data-footnote-reference="1">1</sup> title', $contentEntity->getTitle());
+        $this->assertEquals('<p>test <sup data-footnote-reference="2">2</sup> content</p>', $contentEntity->getContent());
     }
 
     public function testExportsNotes()
@@ -87,7 +88,7 @@ class ChapterConverterTest extends TestCase
         $footnoteRepo = $this->getFootnoteRepo([8 => 'test first', 12 => 'test second']);
         $extractedChapter->extractFootnotes(new FootnoteReferenceCollector(), $footnoteRepo);
 
-        $converter = new ChapterConverter(new NodeConverter());
+        $converter = $this->getChapterConverter();
         $converter->setTargetNoteTag('sup');
         $converter->setTargetNoteAttribute('data-note-reference');
         $contentEntity = $converter->convert($extractedChapter);
@@ -110,7 +111,7 @@ class ChapterConverterTest extends TestCase
     {
         $extractedChapter = $this->getExtractedChapter('<h4>test</h4>', '<p>test <small>content</small></p>');
 
-        $converter = new ChapterConverter(new NodeConverter());
+        $converter = $this->getChapterConverter();
         $contentEntity = $converter->convert($extractedChapter);
 
         $this->assertEquals('test', $contentEntity->getTitle());
@@ -136,5 +137,14 @@ class ChapterConverterTest extends TestCase
             }
         }
         return $footnoteRepo;
+    }
+
+    private function getChapterConverter(): ChapterConverter
+    {
+        $htmlCleaner = new HtmlCleaner();
+        $chapterConverter = new ChapterConverter(new NodeConverter(), $htmlCleaner);
+        $chapterConverter->setAllowedTagsAndAttributesTitle(['sup' => 'data-footnote-reference']);
+        $chapterConverter->setAllowedTagsAndAttributesContent(Content::ALLOWED_HTML_TAGS_AND_ATTRIBUTES);
+        return $chapterConverter;
     }
 }

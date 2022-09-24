@@ -40,7 +40,14 @@ class Content
       self::CONTENT_TYPE_JSON => 'json'
     ];
 
-    const ALLOWED_HTML_TAGS = ['<p>', '<blockquote>', '<sup>', '<b>'];
+    const ALLOWED_HTML_TAGS = ['<p>', '<blockquote>', '<sup>', '<b>', '<i>'];
+    const ALLOWED_HTML_TAGS_AND_ATTRIBUTES = [
+        'p' => [],
+        'blockquote' => [],
+        'sup' => ['data-footnote-reference'],
+        'b' => [],
+        'i' => []
+    ];
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
