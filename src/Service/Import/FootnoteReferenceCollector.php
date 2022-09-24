@@ -16,8 +16,7 @@ class FootnoteReferenceCollector
         $footnoteNodes = $doc->getElementsByTagName($footnoteTag);
         foreach ($footnoteNodes as $footnoteNode) {
             assert($footnoteNode instanceof DOMElement);
-            $globalNoteId = $footnoteNode->getAttribute($footnoteAttribute);
-            $noteIds[] = $globalNoteId;
+            $noteIds[] = $footnoteNode->getAttribute($footnoteAttribute);
         }
 
         return $noteIds;

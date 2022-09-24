@@ -6,7 +6,7 @@ use App\Repository\BasicFootnoteRepository;
 use App\Service\Import\FootnoteReferenceCollector;
 use Exception;
 
-class ExtractedChapter
+class ExtractedChapter implements ChapterInterface
 {
     private string $title = '';
     private string $content = '';
@@ -65,6 +65,9 @@ class ExtractedChapter
         return $this->footnotes;
     }
 
+    /**
+     * @throws Exception
+     */
     public function extractFootnotes(FootnoteReferenceCollector $collector, BasicFootnoteRepository $footnoteRepo): void
     {
         $this->footnotes = [];
@@ -79,6 +82,9 @@ class ExtractedChapter
 
         foreach ($footnoteIds as $footnoteId) {
             $noteText = $footnoteRepo->getById($footnoteId);
+            if ($noteText === null) {
+                throw new Exception('footnote not found in repo');
+            }
             $this->footnotes[$footnoteId] = $noteText;
         }
     }

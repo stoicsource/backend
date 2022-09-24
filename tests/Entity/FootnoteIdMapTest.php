@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 class FootnoteIdMapTest extends TestCase
 {
 
-    public function testAdjustNoteIds()
+    public function testRenumberNotes()
     {
         $doc = new DOMDocument();
         $baseNode = $doc->appendChild($doc->createElement('p'));
@@ -19,7 +19,7 @@ class FootnoteIdMapTest extends TestCase
         $secondLinkNode->setAttribute('data-footnote-reference', 456);
 
         $idMap = new FootnoteIdMap();
-        $idMap->adjustNoteIds($baseNode, 'sup', 'data-footnote-reference');
+        $idMap->renumberNoteIds($baseNode, 'sup', 'data-footnote-reference');
         $this->assertEquals(1, $linkNode->nodeValue);
         $this->assertEquals(1, $linkNode->getAttribute('data-footnote-reference'));
         $this->assertEquals(2, $secondLinkNode->nodeValue);
@@ -27,9 +27,4 @@ class FootnoteIdMapTest extends TestCase
         $this->assertEquals(2, $idMap->count());
     }
 
-//    public function testGetLocalIds()
-//    {
-//        $idMap = new FootnoteIdMap();
-//        $idMap->
-//    }
 }

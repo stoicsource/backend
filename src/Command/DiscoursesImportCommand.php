@@ -119,7 +119,7 @@ class DiscoursesImportCommand extends Command
                 assert($titleNode instanceof DOMNode);
 
                 $this->nodeConverter->convertAllChildren($titleNode, 'a', null, 'sup', 'data-footnote-reference');
-                $footnoteIdMap->adjustNoteIds($titleNode, 'sup', 'data-footnote-reference');
+                $footnoteIdMap->renumberNoteIds($titleNode, 'sup', 'data-footnote-reference');
                 $chapterTitle = $titleNode->ownerDocument->saveHTML($titleNode);
                 $chapterTitle = strip_tags($chapterTitle, ['sup']);
 
@@ -133,7 +133,7 @@ class DiscoursesImportCommand extends Command
                     assert($pNode instanceof DOMElement);
 
                     $this->nodeConverter->convertAllChildren($pNode, 'a', null, 'sup', 'data-footnote-reference');
-                    $footnoteIdMap->adjustNoteIds($pNode, 'sup', 'data-footnote-reference');
+                    $footnoteIdMap->renumberNoteIds($pNode, 'sup', 'data-footnote-reference');
 
                     $combinedContentHtml .= $pNode->ownerDocument->saveHTML($pNode);
                 }

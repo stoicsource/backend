@@ -16,7 +16,7 @@ class FootnoteIdMap
         return $this->idMappingsGlobalToLocal[$globalId];
     }
 
-    public function adjustNoteIds(DOMElement $baseNode, string $footnoteTag, string $footnoteAttribute): void
+    public function renumberNoteIds(DOMElement $baseNode, string $footnoteTag, string $footnoteAttribute): void
     {
         $footnoteNodes = $baseNode->getElementsByTagName($footnoteTag);
         foreach ($footnoteNodes as $footnoteNode) {

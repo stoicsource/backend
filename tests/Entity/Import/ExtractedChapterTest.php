@@ -5,6 +5,7 @@ namespace App\Tests\Entity\Import;
 use App\Entity\Import\ExtractedChapter;
 use App\Repository\BasicFootnoteRepository;
 use App\Service\Import\FootnoteReferenceCollector;
+use Exception;
 use PHPUnit\Framework\TestCase;
 
 class ExtractedChapterTest extends TestCase
@@ -39,5 +40,19 @@ class ExtractedChapterTest extends TestCase
         $this->assertCount(1, $chapter->getFootnotes());
         $this->assertArrayHasKey(3, $chapter->getFootnotes());
         $this->assertEquals('test note', $chapter->getFootnotes()[3]);
+    }
+
+    public function testExceptionIfFootnoteNotInRepo()
+    {
+        $chapter = new ExtractedChapter();
+        $chapter->setContent('<p>test<a data-footnote="3">3</a></p>');
+        $chapter->setFootnoteTag('a');
+        $chapter->setFootnoteAttribute('data-footnote');
+
+        $collector = new FootnoteReferenceCollector();
+        $footnoteRepo = new BasicFootnoteRepository();
+
+        $this->expectException(Exception::class);
+        $chapter->extractFootnotes($collector, $footnoteRepo);
     }
 }
