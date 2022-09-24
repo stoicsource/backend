@@ -7,7 +7,7 @@ use DOMElement;
 
 class FootnoteReferenceCollector
 {
-    public function collectReferences(string $html, string $footnoteTag, string $footnoteAttribute): array
+    public function collectReferences(string $html, string $footnoteTag, ?string $footnoteAttribute): array
     {
         $doc = new DOMDocument();
         $doc->loadHTML($html);
@@ -16,7 +16,11 @@ class FootnoteReferenceCollector
         $footnoteNodes = $doc->getElementsByTagName($footnoteTag);
         foreach ($footnoteNodes as $footnoteNode) {
             assert($footnoteNode instanceof DOMElement);
-            $noteIds[] = $footnoteNode->getAttribute($footnoteAttribute);
+            if ($footnoteAttribute) {
+                $noteIds[] = $footnoteNode->getAttribute($footnoteAttribute);
+            } else {
+                $noteIds[] = $footnoteNode->nodeValue;
+            }
         }
 
         return $noteIds;

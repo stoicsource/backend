@@ -7,12 +7,15 @@ namespace App\Command;
 use App\Entity\Content;
 use App\Entity\Edition;
 use App\Entity\FootnoteIdMap;
+use App\Entity\Import\ExtractedChapter;
 use App\Entity\TocEntry;
 use App\Entity\Work;
 use App\Repository\AuthorRepository;
 use App\Repository\BasicFootnoteRepository;
 use App\Repository\TocEntryRepository;
 use App\Repository\WorkRepository;
+use App\Service\Import\ChapterConverter;
+use App\Service\Import\FootnoteReferenceCollector;
 use App\Service\Import\NodeConverter;
 use Doctrine\ORM\EntityManagerInterface;
 use DOMDocument;
@@ -110,20 +113,19 @@ class DiscoursesImportCommand extends Command
 
                 $tocLabel = "$bookNr.$chapterNr";
 
-                $footnoteIdMap = new FootnoteIdMap();
+
+                $chapter = new ExtractedChapter();
+                $chapter->setFootnoteTag('a');
 
 
                 $headNodes = $chapterNode->getElementsByTagName('h4');
                 assert($headNodes->count() > 0);
                 $titleNode = $headNodes[0];
                 assert($titleNode instanceof DOMNode);
+                $chapter->setTitle($titleNode->ownerDocument->saveHTML($titleNode));
 
-                $this->nodeConverter->convertAllChildren($titleNode, 'a', null, 'sup', 'data-footnote-reference');
-                $footnoteIdMap->renumberNoteIds($titleNode, 'sup', 'data-footnote-reference');
-                $chapterTitle = $titleNode->ownerDocument->saveHTML($titleNode);
-                $chapterTitle = strip_tags($chapterTitle, ['sup']);
+                $io->info("importing $tocLabel: $titleNode->nodeValue");
 
-                $io->info("importing $tocLabel: $chapterTitle");
 
 
                 // Content of the chapter
@@ -132,28 +134,11 @@ class DiscoursesImportCommand extends Command
                 foreach ($pNodes as $pNode) {
                     assert($pNode instanceof DOMElement);
 
-                    $this->nodeConverter->convertAllChildren($pNode, 'a', null, 'sup', 'data-footnote-reference');
-                    $footnoteIdMap->renumberNoteIds($pNode, 'sup', 'data-footnote-reference');
-
                     $combinedContentHtml .= $pNode->ownerDocument->saveHTML($pNode);
                 }
+                $chapter->setContent($combinedContentHtml);
 
-                $combinedContentHtml = strip_tags($combinedContentHtml, Content::ALLOWED_HTML_TAGS);
-
-
-                // NoteCollection
-                $localNoteCollection = new BasicFootnoteRepository();
-                foreach ($footnoteIdMap->getAllLocalIds() as $localNoteId) {
-                    $globalNoteId = $footnoteIdMap->localToGlobal($localNoteId);
-                    $noteContent = str_replace('↩', '', $footnoteRepository->getById($globalNoteId));
-                    $localNoteCollection->addNote($localNoteId, $noteContent);
-                }
-
-                $entryNotes = '';
-                foreach ($localNoteCollection->getAll() as $noteId => $noteContent) {
-                    $entryNotes .= "<li data-footnote-id=\"$noteId\">" . $noteContent . '</li>';
-                }
-                $entryNotes = $entryNotes > '' ? ('<ol>' . $entryNotes . '</ol>') : null;
+                $chapter->extractFootnotes(new FootnoteReferenceCollector(), $footnoteRepository);
 
 
                 $tocEntry = $this->tocEntryRepository->findOneBy(['work' => $discoursesWork, 'label' => $tocLabel]);
@@ -165,13 +150,13 @@ class DiscoursesImportCommand extends Command
                     $this->entityManager->persist($tocEntry);
                 }
 
-                $newContent = new Content();
-                $newContent->setContent($combinedContentHtml);
-                $newContent->setTitle($chapterTitle);
+                $converter = new ChapterConverter(new NodeConverter());
+                $converter->setTargetNoteTag('sup');
+                $converter->setTargetNoteAttribute('data-footnote-reference');
+
+                $newContent = $converter->convert($chapter);
                 $newContent->setEdition($edition);
                 $newContent->setTocEntry($tocEntry);
-                $newContent->setNotes($entryNotes);
-                $newContent->setContentFormat(Content::CONTENT_TYPE_HTML);
 
                 $this->entityManager->persist($newContent);
             }

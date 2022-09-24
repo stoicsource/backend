@@ -8,5 +8,5 @@ interface ChapterInterface
     public function getContent(): string;
     public function getFootnotes(): array;
     public function getFootnoteTag(): string;
-    public function getFootnoteAttribute(): string;
+    public function getFootnoteAttribute(): ?string;
 }

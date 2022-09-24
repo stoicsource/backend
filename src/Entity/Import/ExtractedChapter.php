@@ -44,7 +44,7 @@ class ExtractedChapter implements ChapterInterface
         $this->footnoteTag = $footnoteTag;
     }
 
-    public function getFootnoteAttribute(): string
+    public function getFootnoteAttribute(): ?string
     {
         return $this->footnoteAttribute;
     }
