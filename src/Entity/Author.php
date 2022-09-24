@@ -8,67 +8,40 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=AuthorRepository::class)
- */
 #[ApiResource(
     collectionOperations: ['get'],
     itemOperations: ['get'],
 )]
+#[ORM\Entity(repositoryClass: AuthorRepository::class)]
 class Author
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     *
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     *
-     */
+    #[ORM\Column(type: 'string', length: 255)]
     private $name;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     *
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $shortName;
 
-    /**
-     * @ORM\Column(type="string", length=255, unique=true)
-     *
-     */
+    #[ORM\Column(type: 'string', length: 255, unique: true)]
     private $urlSlug;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Work::class, mappedBy="author")
-     */
+    #[ORM\OneToMany(targetEntity: Work::class, mappedBy: 'author')]
     private $works;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Edition::class, mappedBy="author")
-     */
+    #[ORM\OneToMany(targetEntity: Edition::class, mappedBy: 'author')]
     private $editions;
 
-    /**
-     * @ORM\Column(type="string", length=32, nullable=true)
-     *
-     */
+    #[ORM\Column(type: 'string', length: 32, nullable: true)]
     private $yearsAlive;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     *
-     */
+    #[ORM\Column(type: 'text', nullable: true)]
     private $summary;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     *
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $moreInfoUrl;
 
     public function __construct()

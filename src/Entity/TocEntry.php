@@ -10,45 +10,30 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=TocEntryRepository::class)
- */
 #[ApiResource(
     collectionOperations: ['get'],
     itemOperations: ['get']
 )]
 #[ApiFilter(SearchFilter::class, properties: ['work' => 'exact'])]
+#[ORM\Entity(repositoryClass: TocEntryRepository::class)]
 class TocEntry
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     *
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Work::class, inversedBy="tocEntries")
-     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
-     */
+    #[ORM\ManyToOne(targetEntity: Work::class, inversedBy: 'tocEntries')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private $work;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Content::class, mappedBy="tocEntry")
-     */
+    #[ORM\OneToMany(targetEntity: Content::class, mappedBy: 'tocEntry')]
     private $contents;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     *
-     */
+    #[ORM\Column(type: 'string', length: 255)]
     private $label;
 
-    /**
-     * @ORM\Column(type="integer")
-     *
-     */
+    #[ORM\Column(type: 'integer')]
     private $sortOrder;
 
     public function __construct()

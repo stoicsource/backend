@@ -11,9 +11,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 
-/**
- * @ORM\Entity(repositoryClass=ContentRepository::class)
- */
 #[ApiResource(
     collectionOperations: ['get'],
     itemOperations: ['get'],
@@ -29,6 +26,7 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
 )]
 #[ApiFilter(SearchFilter::class, properties: ['tocEntry' => 'exact', 'edition' => 'exact'])]
 #[ApiFilter(RandomOrderFilter::class)]
+#[ORM\Entity(repositoryClass: ContentRepository::class)]
 class Content
 {
     const CONTENT_TYPE_TEXT = 1;
@@ -41,50 +39,29 @@ class Content
 
     const ALLOWED_HTML_TAGS = ['<p>', '<blockquote>', '<sup>', '<b>'];
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     *
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=TocEntry::class, inversedBy="contents")
-     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
-     *
-     */
+    #[ORM\ManyToOne(targetEntity: TocEntry::class, inversedBy: 'contents')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private $tocEntry;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Edition::class, inversedBy="contents")
-     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
-     *
-     */
+    #[ORM\ManyToOne(targetEntity: Edition::class, inversedBy: 'contents')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private $edition;
 
-    /**
-     * @ORM\Column(type="text")
-     *
-     */
+    #[ORM\Column(type: 'text')]
     private $content;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     *
-     */
+    #[ORM\Column(type: 'text', nullable: true)]
     private $notes;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     *
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $title;
 
-    /**
-     * @ORM\Column(type="smallint")
-     *
-     */
+    #[ORM\Column(type: 'smallint')]
     private $contentType;
 
     #[Groups(["read"])]

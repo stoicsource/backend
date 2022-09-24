@@ -10,97 +10,58 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=EditionRepository::class)
- */
 #[ApiResource(
     collectionOperations: ['get'],
     itemOperations: ['get'],
 )]
 #[ApiFilter(SearchFilter::class, properties: ['work' => 'exact'])]
+#[ORM\Entity(repositoryClass: EditionRepository::class)]
 class Edition
 {
     public const QUALITY_POOR = 1; // poor, formatting faulty
     public const QUALITY_SOLID = 6; // solid, no apparent faults
     public const QUALITY_EDITED = 8; // flawless, edited manually if needed
-    public const QUALITY_EXCELLENT = 10; // flawless, uses html formatting if necessary
-
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     *
-     */
+    public const QUALITY_EXCELLENT = 10; #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     *
-     */
+    #[ORM\Column(type: 'string', length: 255)]
     private $name;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Work::class, inversedBy="editions")
-     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
-     *
-     */
+    #[ORM\ManyToOne(targetEntity: Work::class, inversedBy: 'editions')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private $work;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Content::class, mappedBy="edition")
-     */
+    #[ORM\OneToMany(targetEntity: Content::class, mappedBy: 'edition')]
     private $contents;
 
-    /**
-     * @ORM\Column(type="string", length=12, nullable=true)
-     *
-     */
+    #[ORM\Column(type: 'string', length: 12, nullable: true)]
     private $year;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     *
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $source;
 
-    /**
-     * @ORM\Column(type="string", length=3)
-     *
-     */
+    #[ORM\Column(type: 'string', length: 3)]
     private $language;
 
-    /**
-     * @ORM\Column(type="smallint")
-     *
-     */
+    #[ORM\Column(type: 'smallint')]
     private $quality;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Author::class, inversedBy="editions")
-     * @ORM\JoinColumn(nullable=false)
-     *
-     */
+    #[ORM\ManyToOne(targetEntity: Author::class, inversedBy: 'editions')]
+    #[ORM\JoinColumn(nullable: false)]
     private $author;
 
-    /**
-     * @ORM\Column(type="json", nullable=true)
-     *
-     */
+    #[ORM\Column(type: 'json', nullable: true)]
     private $contributor = [];
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: 'boolean')]
     private $hasContent;
 
-    /**
-     * @ORM\Column(type="text")
-     */
+    #[ORM\Column(type: 'text')]
     private $copyright;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: 'text', nullable: true)]
     private $internalComment;
 
     public function __construct()

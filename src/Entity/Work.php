@@ -8,54 +8,33 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=WorkRepository::class)
- *
- */
 #[ApiResource(
     collectionOperations: ['get'],
     itemOperations: ['get'],
 )]
+#[ORM\Entity(repositoryClass: WorkRepository::class)]
 class Work
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     *
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     *
-     */
+    #[ORM\Column(type: 'string', length: 255)]
     private $name;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Edition::class, mappedBy="work")
-     *
-     */
+    #[ORM\OneToMany(targetEntity: Edition::class, mappedBy: 'work')]
     private $editions;
 
-    /**
-     * @ORM\OneToMany(targetEntity=TocEntry::class, mappedBy="work")
-     * @ORM\OrderBy({"sortOrder" = "ASC"})
-     *
-     */
+    #[ORM\OneToMany(targetEntity: TocEntry::class, mappedBy: 'work')]
+    #[ORM\OrderBy(['sortOrder' => 'ASC'])]
     private $tocEntries;
 
-    /**
-     * @ORM\Column(type="string", length=255, unique=true)
-     *
-     */
+    #[ORM\Column(type: 'string', length: 255, unique: true)]
     private $urlSlug;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Author::class, inversedBy="works")
-     * @ORM\JoinColumn(nullable=false)
-     *
-     */
+    #[ORM\ManyToOne(targetEntity: Author::class, inversedBy: 'works')]
+    #[ORM\JoinColumn(nullable: false)]
     private $author;
 
     public function __construct()
