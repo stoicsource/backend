@@ -68,7 +68,7 @@ class Content
     private $contentFormat;
 
     #[ORM\Column(type: Types::SMALLINT)]
-    private ?int $noteFormat = null;
+    private ?int $notesFormat = null;
 
     #[Groups(["read"])]
     public function getId(): ?int
@@ -163,14 +163,14 @@ class Content
         return '';
     }
 
-    public function getNoteFormat(): ?int
+    public function getNotesFormat(): ?int
     {
-        return $this->noteFormat;
+        return $this->notesFormat;
     }
 
-    public function setNoteFormat(int $noteFormat): self
+    public function setNotesFormat(int $notesFormat): self
     {
-        $this->noteFormat = $noteFormat;
+        $this->notesFormat = $notesFormat;
 
         return $this;
     }
@@ -179,8 +179,8 @@ class Content
     #[SerializedName("noteFormat")]
     public function getFormattedNoteFormat(): string
     {
-        if (array_key_exists($this->noteFormat, self::CONTENT_TYPE_NAMES)) {
-            return self::CONTENT_TYPE_NAMES[$this->noteFormat];
+        if (array_key_exists($this->notesFormat, self::CONTENT_TYPE_NAMES)) {
+            return self::CONTENT_TYPE_NAMES[$this->notesFormat];
         }
         return '';
     }

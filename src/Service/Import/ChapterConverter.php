@@ -71,7 +71,7 @@ class ChapterConverter
             }
 
             $resultContent->setNotes(json_encode($targetFootnotes));
-            $resultContent->setNoteFormat(Content::CONTENT_TYPE_JSON);
+            $resultContent->setNotesFormat(Content::CONTENT_TYPE_JSON);
         }
 
         return $resultContent;
