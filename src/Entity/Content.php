@@ -7,6 +7,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Filter\RandomOrderFilter;
 use App\Repository\ContentRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
@@ -29,12 +30,14 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
 #[ORM\Entity(repositoryClass: ContentRepository::class)]
 class Content
 {
-    const CONTENT_TYPE_TEXT = 1;
+    const CONTENT_TYPE_PLAIN = 1;
     const CONTENT_TYPE_HTML = 2;
+    const CONTENT_TYPE_JSON = 3;
 
     const CONTENT_TYPE_NAMES = [
-      self::CONTENT_TYPE_TEXT => 'text',
-      self::CONTENT_TYPE_HTML => 'html'
+      self::CONTENT_TYPE_PLAIN => 'text',
+      self::CONTENT_TYPE_HTML => 'html',
+      self::CONTENT_TYPE_JSON => 'json'
     ];
 
     const ALLOWED_HTML_TAGS = ['<p>', '<blockquote>', '<sup>', '<b>'];
@@ -62,7 +65,10 @@ class Content
     private $title;
 
     #[ORM\Column(type: 'smallint')]
-    private $contentType;
+    private $contentFormat;
+
+    #[ORM\Column(type: Types::SMALLINT)]
+    private ?int $noteFormat = null;
 
     #[Groups(["read"])]
     public function getId(): ?int
@@ -135,14 +141,14 @@ class Content
         return $this;
     }
 
-    public function getContentType(): ?int
+    public function getContentFormat(): ?int
     {
-        return $this->contentType;
+        return $this->contentFormat;
     }
 
-    public function setContentType(int $contentType): self
+    public function setContentFormat(int $contentFormat): self
     {
-        $this->contentType = $contentType;
+        $this->contentFormat = $contentFormat;
 
         return $this;
     }
@@ -151,9 +157,32 @@ class Content
     #[SerializedName("contentType")]
     public function getFormattedContentType(): string
     {
-        if (array_key_exists($this->contentType, self::CONTENT_TYPE_NAMES)) {
-            return self::CONTENT_TYPE_NAMES[$this->contentType];
+        if (array_key_exists($this->contentFormat, self::CONTENT_TYPE_NAMES)) {
+            return self::CONTENT_TYPE_NAMES[$this->contentFormat];
         }
         return '';
     }
+
+    public function getNoteFormat(): ?int
+    {
+        return $this->noteFormat;
+    }
+
+    public function setNoteFormat(int $noteFormat): self
+    {
+        $this->noteFormat = $noteFormat;
+
+        return $this;
+    }
+
+    #[Groups(["read"])]
+    #[SerializedName("noteFormat")]
+    public function getFormattedNoteFormat(): string
+    {
+        if (array_key_exists($this->noteFormat, self::CONTENT_TYPE_NAMES)) {
+            return self::CONTENT_TYPE_NAMES[$this->noteFormat];
+        }
+        return '';
+    }
+
 }

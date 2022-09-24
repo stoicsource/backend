@@ -171,7 +171,7 @@ class DiscoursesImportCommand extends Command
                 $newContent->setEdition($edition);
                 $newContent->setTocEntry($tocEntry);
                 $newContent->setNotes($entryNotes);
-                $newContent->setContentType(Content::CONTENT_TYPE_HTML);
+                $newContent->setContentFormat(Content::CONTENT_TYPE_HTML);
 
                 $this->entityManager->persist($newContent);
             }

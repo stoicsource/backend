@@ -84,7 +84,7 @@ class ChapterConverterTest extends TestCase
             'data-ref'
         );
 
-        $footnoteRepo = $this->getFootnoteRepo([8 => 'test', 12 => 'test']);
+        $footnoteRepo = $this->getFootnoteRepo([8 => 'test first', 12 => 'test second']);
         $extractedChapter->extractFootnotes(new FootnoteReferenceCollector(), $footnoteRepo);
 
         $converter = new ChapterConverter(new NodeConverter());
@@ -93,6 +93,17 @@ class ChapterConverterTest extends TestCase
         $contentEntity = $converter->convert($extractedChapter);
 
         $this->assertNotEmpty($contentEntity->getNotes());
+        $expectedNotes = json_encode([
+            [
+                'id' => 1,
+                'content' => 'test first'
+            ],
+            [
+                'id' => 2,
+                'content' => 'test second'
+            ]
+        ]);
+        $this->assertEquals($expectedNotes, $contentEntity->getNotes());
     }
 
     private function getExtractedChapter($title, $content, $footnoteTag = 'irrelevant',$footnoteAttribute = 'irrelevant'): ExtractedChapter

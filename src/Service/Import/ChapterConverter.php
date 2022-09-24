@@ -51,6 +51,7 @@ class ChapterConverter
             $idMap->renumberNoteIds($contentBaseNode, $this->targetNoteTag, $this->targetNoteAttribute);
 
             $resultContent->setContent($contentDoc->saveHTML($contentBaseNode));
+            $resultContent->setContentFormat(Content::CONTENT_TYPE_HTML);
         }
 
         if (count($idMap->getAllLocalIds()) > 0) {
@@ -63,10 +64,14 @@ class ChapterConverter
                     throw new Exception('Footnote not found');
                 }
                 $noteContent = $sourceFootnotes[$globalId];
-                $targetFootnotes[$localId] = $noteContent;
+                $targetFootnotes[] = [
+                    'id' => $localId,
+                    'content' => $noteContent
+                ] ;
             }
 
-            $resultContent->setNotes(implode(',', $targetFootnotes));
+            $resultContent->setNotes(json_encode($targetFootnotes));
+            $resultContent->setNoteFormat(Content::CONTENT_TYPE_JSON);
         }
 
         return $resultContent;
