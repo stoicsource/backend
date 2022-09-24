@@ -19,7 +19,7 @@ class ChapterConverterTest extends TestCase
         $converter = new ChapterConverter(new NodeConverter());
         $contentEntity = $converter->convert($extractedChapter);
         assert($contentEntity instanceof Content);
-        $this->assertEquals('<p>test title</p>', $contentEntity->getTitle());
+        $this->assertEquals('test title', $contentEntity->getTitle());
     }
 
     public function testConvertsContent()
@@ -50,7 +50,7 @@ class ChapterConverterTest extends TestCase
         $converter->setTargetNoteAttribute('data-note-reference');
         $contentEntity = $converter->convert($extractedChapter);
 
-        $this->assertEquals('<p>test <sup data-note-reference="1">1</sup> title</p>', $contentEntity->getTitle());
+        $this->assertEquals('test <sup data-note-reference="1">1</sup> title', $contentEntity->getTitle());
         $this->assertEquals('<p>test <sup data-note-reference="2">2</sup> content</p>', $contentEntity->getContent());
     }
 
@@ -71,7 +71,7 @@ class ChapterConverterTest extends TestCase
         $converter->setTargetNoteAttribute('data-note-reference');
         $contentEntity = $converter->convert($extractedChapter);
 
-        $this->assertEquals('<p>test <sup data-note-reference="1">1</sup> title</p>', $contentEntity->getTitle());
+        $this->assertEquals('test <sup data-note-reference="1">1</sup> title', $contentEntity->getTitle());
         $this->assertEquals('<p>test <sup data-note-reference="2">2</sup> content</p>', $contentEntity->getContent());
     }
 
@@ -104,6 +104,17 @@ class ChapterConverterTest extends TestCase
             ]
         ]);
         $this->assertEquals($expectedNotes, $contentEntity->getNotes());
+    }
+
+    public function testRemovesUnwantedTags()
+    {
+        $extractedChapter = $this->getExtractedChapter('<h4>test</h4>', '<p>test <small>content</small></p>');
+
+        $converter = new ChapterConverter(new NodeConverter());
+        $contentEntity = $converter->convert($extractedChapter);
+
+        $this->assertEquals('test', $contentEntity->getTitle());
+        $this->assertEquals('<p>test content</p>', $contentEntity->getContent());
     }
 
     private function getExtractedChapter($title, $content, $footnoteTag = 'irrelevant',$footnoteAttribute = 'irrelevant'): ExtractedChapter

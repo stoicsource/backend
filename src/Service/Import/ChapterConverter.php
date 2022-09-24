@@ -8,6 +8,8 @@ use App\Entity\Import\ChapterInterface;
 use DOMDocument;
 use DOMElement;
 use Exception;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
 
 class ChapterConverter
 {
@@ -38,7 +40,15 @@ class ChapterConverter
             $this->nodeConverter->convertAllChildren($titleBaseNode, $extractedChapter->getFootnoteTag(), $extractedChapter->getFootnoteAttribute(), $this->targetNoteTag, $this->targetNoteAttribute);
             $idMap->renumberNoteIds($titleBaseNode, $this->targetNoteTag, $this->targetNoteAttribute);
 
-            $resultContent->setTitle($titleDoc->saveHTML($titleBaseNode));
+            $titleHtml = $titleDoc->saveHTML($titleBaseNode);
+            $config = (new HtmlSanitizerConfig())
+                ->allowElement('sup', [$this->targetNoteAttribute]);
+            //$sanitizer = new HtmlSanitizer($config);
+            //$titleHtml = $sanitizer->sanitize($titleHtml);
+
+            $titleHtml = strip_tags($titleHtml, ['sup']);
+
+            $resultContent->setTitle($titleHtml);
         }
 
         if ($extractedChapter->getContent() > '') {
@@ -50,7 +60,10 @@ class ChapterConverter
             $this->nodeConverter->convertAllChildren($contentBaseNode, $extractedChapter->getFootnoteTag(), $extractedChapter->getFootnoteAttribute(), $this->targetNoteTag, $this->targetNoteAttribute);
             $idMap->renumberNoteIds($contentBaseNode, $this->targetNoteTag, $this->targetNoteAttribute);
 
-            $resultContent->setContent($contentDoc->saveHTML($contentBaseNode));
+            $contentHtml = $contentDoc->saveHTML($contentBaseNode);
+            $contentHtml = strip_tags($contentHtml, Content::ALLOWED_HTML_TAGS);
+
+            $resultContent->setContent($contentHtml);
             $resultContent->setContentFormat(Content::CONTENT_TYPE_HTML);
         }
 
@@ -64,6 +77,7 @@ class ChapterConverter
                     throw new Exception('Footnote not found');
                 }
                 $noteContent = $sourceFootnotes[$globalId];
+                $noteContent = strip_tags($noteContent, Content::ALLOWED_HTML_TAGS);
                 $targetFootnotes[] = [
                     'id' => $localId,
                     'content' => $noteContent
