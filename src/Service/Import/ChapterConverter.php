@@ -34,7 +34,7 @@ class ChapterConverter
 
         if ($extractedChapter->getTitle() > '') {
             $titleDoc = new DOMDocument();
-            $titleDoc->loadHTML($extractedChapter->getTitle());
+            $titleDoc->loadHTML(mb_convert_encoding($extractedChapter->getTitle(), 'HTML-ENTITIES', 'UTF-8'));
             $titleBaseNode = $titleDoc->getElementsByTagName('body')->item(0)->firstChild;
             assert($titleBaseNode instanceof DOMElement);
 
@@ -49,8 +49,8 @@ class ChapterConverter
         }
 
         if ($extractedChapter->getContent() > '') {
-            $contentDoc = new DOMDocument();
-            $contentDoc->loadHTML($extractedChapter->getContent());
+            $contentDoc = new DOMDocument('1.0', 'utf-8');
+            $contentDoc->loadHTML(mb_convert_encoding($extractedChapter->getContent(), 'HTML-ENTITIES', 'UTF-8'));
             $contentBaseNode = $contentDoc->getElementsByTagName('body')->item(0)->firstChild;
             assert($contentBaseNode instanceof DOMElement);
 
