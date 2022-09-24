@@ -35,7 +35,7 @@ class ChapterConverter
         if ($extractedChapter->getTitle() > '') {
             $titleDoc = new DOMDocument();
             $titleDoc->loadHTML(mb_convert_encoding($extractedChapter->getTitle(), 'HTML-ENTITIES', 'UTF-8'));
-            $titleBaseNode = $titleDoc->getElementsByTagName('body')->item(0)->firstChild;
+            $titleBaseNode = $titleDoc->getElementsByTagName('body')->item(0);
             assert($titleBaseNode instanceof DOMElement);
 
             $this->nodeConverter->convertAllChildren($titleBaseNode, $extractedChapter->getFootnoteTag(), $extractedChapter->getFootnoteAttribute(), $this->targetNoteTag, $this->targetNoteAttribute);
@@ -51,7 +51,7 @@ class ChapterConverter
         if ($extractedChapter->getContent() > '') {
             $contentDoc = new DOMDocument('1.0', 'utf-8');
             $contentDoc->loadHTML(mb_convert_encoding($extractedChapter->getContent(), 'HTML-ENTITIES', 'UTF-8'));
-            $contentBaseNode = $contentDoc->getElementsByTagName('body')->item(0)->firstChild;
+            $contentBaseNode = $contentDoc->getElementsByTagName('body')->item(0);
             assert($contentBaseNode instanceof DOMElement);
 
             $this->nodeConverter->convertAllChildren($contentBaseNode, $extractedChapter->getFootnoteTag(), $extractedChapter->getFootnoteAttribute(), $this->targetNoteTag, $this->targetNoteAttribute);

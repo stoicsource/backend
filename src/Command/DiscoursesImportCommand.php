@@ -99,7 +99,8 @@ class DiscoursesImportCommand extends Command
             $elementId = $footnoteElement->getAttribute('id');
             $globalNoteId = explode('-', $elementId)[1];
 
-            $footnoteText = $footnoteElement->nodeValue;
+            // TODO: html and clean
+            $footnoteText = $doc->saveHTML($footnoteElement);
             $footnoteText = str_replace('↩', '', $footnoteText);
 
             $footnoteRepository->addNote($globalNoteId, $footnoteText);
@@ -139,11 +140,11 @@ class DiscoursesImportCommand extends Command
 
                 // Content of the chapter
                 $combinedContentHtml = '';
-                $pNodes = $chapterNode->getElementsByTagName('p');
-                foreach ($pNodes as $pNode) {
-                    assert($pNode instanceof DOMElement);
-
-                    $combinedContentHtml .= $pNode->ownerDocument->saveHTML($pNode);
+                $contentNodes = $chapterNode->childNodes;
+                foreach ($contentNodes as $contentNode) {
+                    if ($contentNode instanceof DOMElement && in_array($contentNode->tagName, ['p', 'blockquote']) ) {
+                        $combinedContentHtml .= $contentNode->ownerDocument->saveHTML($contentNode);
+                    }
                 }
                 $chapter->setContent($combinedContentHtml);
 

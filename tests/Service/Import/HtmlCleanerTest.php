@@ -12,7 +12,7 @@ class HtmlCleanerTest extends TestCase
     {
         $taintedHtml = '<h4 xmlns="http://www.w3.org/1999/xhtml" epub:type="title" xmlns:epub="http://www.idpf.org/2007/ops">That the Faculties<a href="#note-57" id="noteref-57" epub:type="noteref">57</a> Are Not Safe to the Uninstructed</h4>';
         $cleaner = new HtmlCleaner();
-        $cleaner->setAllowedTagsAndAttributes(Content::ALLOWED_HTML_TAGS);
+        $cleaner->setAllowedTagsAndAttributes(Content::ALLOWED_HTML_TAGS_AND_ATTRIBUTES);
         $cleanedHtml = $cleaner->clean($taintedHtml);
         $expectedHtml = 'That the Faculties57 Are Not Safe to the Uninstructed';
         $this->assertEquals($expectedHtml, $cleanedHtml);
