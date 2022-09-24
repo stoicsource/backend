@@ -183,7 +183,7 @@ class Content
     }
 
     #[Groups(["read"])]
-    #[SerializedName("noteFormat")]
+    #[SerializedName("notesFormat")]
     public function getFormattedNoteFormat(): string
     {
         if (array_key_exists($this->notesFormat, self::CONTENT_TYPE_NAMES)) {

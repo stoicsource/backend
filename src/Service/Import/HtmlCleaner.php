@@ -33,6 +33,8 @@ class HtmlCleaner
         $sanitizer = new HtmlSanitizer($config);
         $sanitizedHtml = $sanitizer->sanitize($strippedHtml);
 
+        $sanitizedHtml = trim($sanitizedHtml);
+
         return $sanitizedHtml;
     }
 }

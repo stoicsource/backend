@@ -6,7 +6,6 @@ namespace App\Command;
 
 use App\Entity\Content;
 use App\Entity\Edition;
-use App\Entity\FootnoteIdMap;
 use App\Entity\Import\ExtractedChapter;
 use App\Entity\TocEntry;
 use App\Entity\Work;
@@ -16,6 +15,7 @@ use App\Repository\TocEntryRepository;
 use App\Repository\WorkRepository;
 use App\Service\Import\ChapterConverter;
 use App\Service\Import\FootnoteReferenceCollector;
+use App\Service\Import\HtmlCleaner;
 use App\Service\Import\NodeConverter;
 use Doctrine\ORM\EntityManagerInterface;
 use DOMDocument;
@@ -85,6 +85,11 @@ class DiscoursesImportCommand extends Command
         $doc = new DOMDocument();
         @$doc->loadHTMLFile($url);
 
+        $converter = new ChapterConverter(new NodeConverter(), new HtmlCleaner());
+        $converter->setTargetNoteTag('sup');
+        $converter->setTargetNoteAttribute('data-footnote-reference');
+        $converter->setAllowedTagsAndAttributesTitle(['sup' => 'data-footnote-reference']);
+        $converter->setAllowedTagsAndAttributesContent(Content::ALLOWED_HTML_TAGS_AND_ATTRIBUTES);
 
         $footnoteRepository = new BasicFootnoteRepository();
         $x = new DOMXPath($doc);
@@ -93,7 +98,11 @@ class DiscoursesImportCommand extends Command
             assert($footnoteElement instanceof DOMElement);
             $elementId = $footnoteElement->getAttribute('id');
             $globalNoteId = explode('-', $elementId)[1];
-            $footnoteRepository->addNote($globalNoteId, $footnoteElement->nodeValue);
+
+            $footnoteText = $footnoteElement->nodeValue;
+            $footnoteText = str_replace('↩', '', $footnoteText);
+
+            $footnoteRepository->addNote($globalNoteId, $footnoteText);
         }
 
 
@@ -149,10 +158,6 @@ class DiscoursesImportCommand extends Command
                     $tocEntry->setSortOrder(($bookNr * 100) + (int)$chapterNr);
                     $this->entityManager->persist($tocEntry);
                 }
-
-                $converter = new ChapterConverter(new NodeConverter());
-                $converter->setTargetNoteTag('sup');
-                $converter->setTargetNoteAttribute('data-footnote-reference');
 
                 $newContent = $converter->convert($chapter);
                 $newContent->setEdition($edition);

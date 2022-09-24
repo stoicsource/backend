@@ -37,4 +37,15 @@ class HtmlCleanerTest extends TestCase
         $cleanedHtml = $cleaner->clean($sourceHtml);
         $this->assertEquals($expectedHtml, $cleanedHtml);
     }
+
+    public function testTrims()
+    {
+        $sourceHtml = "\n\t\t\t\t\tJohann Schweigh\u00e4user writes\n\t\t\t\t";
+        $expectedHtml = 'Johann Schweigh\u00e4user writes';
+
+        $cleaner = new HtmlCleaner();
+        $cleaner->setAllowedTagsAndAttributes(Content::ALLOWED_HTML_TAGS_AND_ATTRIBUTES);
+        $cleanedHtml = $cleaner->clean($sourceHtml);
+        $this->assertEquals($expectedHtml, $cleanedHtml);
+    }
 }

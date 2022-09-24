@@ -75,7 +75,8 @@ class ChapterConverter
                     throw new Exception('Footnote not found');
                 }
                 $noteContent = $sourceFootnotes[$globalId];
-                $noteContent = strip_tags($noteContent, Content::ALLOWED_HTML_TAGS);
+                $this->htmlCleaner->setAllowedTagsAndAttributes($this->allowedTagsAndAttributesContent);
+                $noteContent = $this->htmlCleaner->clean($noteContent);
                 $targetFootnotes[] = [
                     'id' => $localId,
                     'content' => $noteContent
