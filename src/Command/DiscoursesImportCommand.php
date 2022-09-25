@@ -99,7 +99,6 @@ class DiscoursesImportCommand extends Command
             $elementId = $footnoteElement->getAttribute('id');
             $globalNoteId = explode('-', $elementId)[1];
 
-            // TODO: html and clean
             $footnoteText = $doc->saveHTML($footnoteElement);
             $footnoteText = str_replace('↩', '', $footnoteText);
 
