@@ -33,33 +33,13 @@ class ChapterConverter
         $idMap = new FootnoteIdMap();
 
         if ($extractedChapter->getTitle() > '') {
-            $titleDoc = new DOMDocument();
-            $titleDoc->loadHTML(mb_convert_encoding($extractedChapter->getTitle(), 'HTML-ENTITIES', 'UTF-8'));
-            $titleBaseNode = $titleDoc->getElementsByTagName('body')->item(0);
-            assert($titleBaseNode instanceof DOMElement);
-
-            $this->nodeConverter->convertAllChildren($titleBaseNode, $extractedChapter->getFootnoteTag(), $extractedChapter->getFootnoteAttribute(), $this->targetNoteTag, $this->targetNoteAttribute);
-            $idMap->renumberNoteIds($titleBaseNode, $this->targetNoteTag, $this->targetNoteAttribute);
-
-            $titleHtml = $titleDoc->saveHTML($titleBaseNode);
-            $this->htmlCleaner->setAllowedTagsAndAttributes($this->allowedTagsAndAttributesTitle);
-            $titleHtml = $this->htmlCleaner->clean($titleHtml);
+            $titleHtml = $this->processHtml($extractedChapter->getTitle(), $extractedChapter, $idMap, $this->allowedTagsAndAttributesTitle);
 
             $resultContent->setTitle($titleHtml);
         }
 
         if ($extractedChapter->getContent() > '') {
-            $contentDoc = new DOMDocument('1.0', 'utf-8');
-            $contentDoc->loadHTML(mb_convert_encoding($extractedChapter->getContent(), 'HTML-ENTITIES', 'UTF-8'));
-            $contentBaseNode = $contentDoc->getElementsByTagName('body')->item(0);
-            assert($contentBaseNode instanceof DOMElement);
-
-            $this->nodeConverter->convertAllChildren($contentBaseNode, $extractedChapter->getFootnoteTag(), $extractedChapter->getFootnoteAttribute(), $this->targetNoteTag, $this->targetNoteAttribute);
-            $idMap->renumberNoteIds($contentBaseNode, $this->targetNoteTag, $this->targetNoteAttribute);
-
-            $contentHtml = $contentDoc->saveHTML($contentBaseNode);
-            $this->htmlCleaner->setAllowedTagsAndAttributes($this->allowedTagsAndAttributesContent);
-            $contentHtml = $this->htmlCleaner->clean($contentHtml);
+            $contentHtml = $this->processHtml($extractedChapter->getContent(), $extractedChapter, $idMap, $this->allowedTagsAndAttributesContent);
 
             $resultContent->setContent($contentHtml);
             $resultContent->setContentFormat(Content::CONTENT_TYPE_HTML);
@@ -88,6 +68,21 @@ class ChapterConverter
         }
 
         return $resultContent;
+    }
+
+    public function processHtml($sourceHtml, ChapterInterface $extractedChapter, FootnoteIdMap $idMap, $allowedTags)
+    {
+        $contentDoc = new DOMDocument('1.0', 'utf-8');
+        $contentDoc->loadHTML(mb_convert_encoding($sourceHtml, 'HTML-ENTITIES', 'UTF-8'));
+        $contentBaseNode = $contentDoc->getElementsByTagName('body')->item(0);
+        assert($contentBaseNode instanceof DOMElement);
+
+        $this->nodeConverter->convertAllChildren($contentBaseNode, $extractedChapter->getFootnoteTag(), $extractedChapter->getFootnoteAttribute(), $this->targetNoteTag, $this->targetNoteAttribute);
+        $idMap->renumberNoteIds($contentBaseNode, $this->targetNoteTag, $this->targetNoteAttribute);
+
+        $contentHtml = $contentDoc->saveHTML($contentBaseNode);
+        $this->htmlCleaner->setAllowedTagsAndAttributes($allowedTags);
+        return $this->htmlCleaner->clean($contentHtml);
     }
 
     public function getTargetNoteTag(): string
@@ -129,5 +124,4 @@ class ChapterConverter
     {
         $this->allowedTagsAndAttributesContent = $allowedTagsAndAttributesContent;
     }
-
 }
