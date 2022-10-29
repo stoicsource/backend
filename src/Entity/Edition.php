@@ -6,13 +6,16 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\EditionRepository;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource(
     collectionOperations: ['get'],
     itemOperations: ['get'],
+    normalizationContext: [
+        'groups' => ['read']
+    ]
 )]
 #[ApiFilter(SearchFilter::class, properties: ['work' => 'exact'])]
 #[ORM\Entity(repositoryClass: EditionRepository::class)]
@@ -21,48 +24,53 @@ class Edition
     public const QUALITY_POOR = 1; // poor, formatting faulty
     public const QUALITY_SOLID = 6; // solid, no apparent faults
     public const QUALITY_EDITED = 8; // flawless, edited manually if needed
-    public const QUALITY_EXCELLENT = 10; #[ORM\Id]
+    public const QUALITY_EXCELLENT = 10;
+
+    #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private int $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private $name;
+    private string $name;
 
     #[ORM\ManyToOne(targetEntity: Work::class, inversedBy: 'editions')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
-    private $work;
+    private Work $work;
 
-    #[ORM\OneToMany(targetEntity: Chapter::class, mappedBy: 'edition')]
-    private $chapters;
+    #[ORM\OneToMany(mappedBy: 'edition', targetEntity: Chapter::class)]
+    private Collection $chapters;
 
     #[ORM\Column(type: 'string', length: 12, nullable: true)]
-    private $year;
+    private string $year;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $source;
+    private string $source;
 
     #[ORM\Column(type: 'string', length: 3)]
-    private $language;
+    private string $language;
 
     #[ORM\Column(type: 'smallint')]
-    private $quality;
+    private int $quality;
 
     #[ORM\ManyToOne(targetEntity: Author::class, inversedBy: 'editions')]
     #[ORM\JoinColumn(nullable: false)]
-    private $author;
+    private Author $author;
 
     #[ORM\Column(type: 'json', nullable: true)]
-    private $contributor = [];
+    private ?array $contributor = [];
 
     #[ORM\Column(type: 'boolean')]
-    private $hasContent;
+    private bool $hasContent;
 
     #[ORM\Column(type: 'text')]
-    private $copyright;
+    private string $copyright;
 
     #[ORM\Column(type: 'text', nullable: true)]
-    private $internalComment;
+    private ?string $internalComment;
+
+    #[ORM\Column(type: 'json', nullable: true)]
+    private ?array $sources = [];
 
     public function __construct()
     {
@@ -73,12 +81,14 @@ class Edition
         return $this->work . ', ' . $this->author . '(' . $this->year. ')';
     }
 
-    public function getId(): ?int
+    #[Groups(["read"])]
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function getName(): ?string
+    #[Groups(["read"])]
+    public function getName(): string
     {
         return $this->name;
     }
@@ -90,12 +100,13 @@ class Edition
         return $this;
     }
 
-    public function getWork(): ?Work
+    #[Groups(["read"])]
+    public function getWork(): Work
     {
         return $this->work;
     }
 
-    public function setWork(?Work $work): self
+    public function setWork(Work $work): self
     {
         $this->work = $work;
 
@@ -132,6 +143,7 @@ class Edition
         return $this;
     }
 
+    #[Groups(["read"])]
     public function getYear(): ?string
     {
         return $this->year;
@@ -144,11 +156,15 @@ class Edition
         return $this;
     }
 
+    #[Groups(["read"])]
     public function getSource(): ?string
     {
         return $this->source;
     }
 
+    /**
+     * @deprecated use setSources instead
+     */
     public function setSource(?string $source): self
     {
         $this->source = $source;
@@ -156,7 +172,8 @@ class Edition
         return $this;
     }
 
-    public function getLanguage(): ?string
+    #[Groups(["read"])]
+    public function getLanguage(): string
     {
         return $this->language;
     }
@@ -168,7 +185,8 @@ class Edition
         return $this;
     }
 
-    public function getQuality(): ?int
+    #[Groups(["read"])]
+    public function getQuality(): int
     {
         return $this->quality;
     }
@@ -180,18 +198,20 @@ class Edition
         return $this;
     }
 
-    public function getAuthor(): ?Author
+    #[Groups(["read"])]
+    public function getAuthor(): Author
     {
         return $this->author;
     }
 
-    public function setAuthor(?Author $author): self
+    public function setAuthor(Author $author): self
     {
         $this->author = $author;
 
         return $this;
     }
 
+    #[Groups(["read"])]
     public function getContributor(): ?array
     {
         return $this->contributor;
@@ -204,6 +224,19 @@ class Edition
         return $this;
     }
 
+    public function getContributorPlainText(): string
+    {
+        return $this->contributor ? json_encode($this->contributor) : "";
+    }
+
+    public function setContributorPlainText(?string $contributor): self
+    {
+        $this->contributor = $contributor ? json_decode($contributor) : null;
+
+        return $this;
+    }
+
+    #[Groups(["read"])]
     public function getHasContent(): ?bool
     {
         return $this->hasContent;
@@ -216,7 +249,8 @@ class Edition
         return $this;
     }
 
-    public function getCopyright(): ?string
+    #[Groups(["read"])]
+    public function getCopyright(): string
     {
         return $this->copyright;
     }
@@ -239,4 +273,30 @@ class Edition
 
         return $this;
     }
+
+    #[Groups(["read"])]
+    public function getSources(): ?array
+    {
+        return $this->sources;
+    }
+
+    public function setSources(?array $sources): self
+    {
+        $this->sources = $sources;
+
+        return $this;
+    }
+
+    public function getSourcesPlainText(): string
+    {
+        return json_encode($this->sources ?? []);
+    }
+
+    public function setSourcesPlainText(string $sources): self
+    {
+        $this->sources = json_decode($sources);
+
+        return $this;
+    }
+
 }

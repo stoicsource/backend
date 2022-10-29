@@ -8,6 +8,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 
 class EditionCrudController extends AbstractCrudController
 {
@@ -28,15 +29,16 @@ class EditionCrudController extends AbstractCrudController
         return [
             AssociationField::new('work'),
             AssociationField::new('author'),
+            Field::new('name')->hideOnIndex(),
             Field::new('year'),
             Field::new('hasContent')->hideOnIndex(),
             Field::new('language')->hideOnIndex(),
             Field::new('quality'),
-            Field::new('source'),
+            TextareaField::new('sourcesPlainText', 'Sources')->hideOnIndex(),
             Field::new('copyright')->hideOnIndex(),
             Field::new('internalComment'),
-            // Field::new('contributor')->hideOnIndex() <- json
-            Field::new('name')->hideOnIndex(),
+            TextareaField::new('contributorPlainText', 'Contributor')->hideOnIndex(),
+
         ];
     }
 
