@@ -6,7 +6,7 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Filter\RandomOrderFilter;
-use App\Repository\ContentRepository;
+use App\Repository\ChapterRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -27,8 +27,7 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
 )]
 #[ApiFilter(SearchFilter::class, properties: ['tocEntry' => 'exact', 'edition' => 'exact'])]
 #[ApiFilter(RandomOrderFilter::class)]
-#[ORM\Entity(repositoryClass: ContentRepository::class)]
-#[ORM\Table("content")]
+#[ORM\Entity(repositoryClass: ChapterRepository::class)]
 class Chapter
 {
     const CONTENT_TYPE_PLAIN = 1;
@@ -56,11 +55,11 @@ class Chapter
     #[ORM\Column(type: 'integer')]
     private $id;
 
-    #[ORM\ManyToOne(targetEntity: TocEntry::class, inversedBy: 'contents')]
+    #[ORM\ManyToOne(targetEntity: TocEntry::class, inversedBy: 'chapters')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private $tocEntry;
 
-    #[ORM\ManyToOne(targetEntity: Edition::class, inversedBy: 'contents')]
+    #[ORM\ManyToOne(targetEntity: Edition::class, inversedBy: 'chapters')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private $edition;
 

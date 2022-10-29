@@ -2,7 +2,6 @@
 
 namespace App\Service\Import;
 
-use App\Entity\Content;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
 

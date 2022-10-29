@@ -2,7 +2,7 @@
 
 namespace App\Service\Import;
 
-use App\Entity\Content;
+use App\Entity\Chapter;
 use App\Entity\FootnoteIdMap;
 use App\Entity\Import\ChapterInterface;
 use DOMDocument;
@@ -26,23 +26,23 @@ class ChapterConverter
     /**
      * @throws Exception
      */
-    public function convert(ChapterInterface $extractedChapter): Content
+    public function convert(ChapterInterface $extractedChapter): Chapter
     {
-        $resultContent = new Content();
+        $resultChapter = new Chapter();
 
         $idMap = new FootnoteIdMap();
 
         if ($extractedChapter->getTitle() > '') {
             $titleHtml = $this->processHtml($extractedChapter->getTitle(), $extractedChapter, $idMap, $this->allowedTagsAndAttributesTitle);
 
-            $resultContent->setTitle($titleHtml);
+            $resultChapter->setTitle($titleHtml);
         }
 
         if ($extractedChapter->getContent() > '') {
             $contentHtml = $this->processHtml($extractedChapter->getContent(), $extractedChapter, $idMap, $this->allowedTagsAndAttributesContent);
 
-            $resultContent->setContent($contentHtml);
-            $resultContent->setContentFormat(Content::CONTENT_TYPE_HTML);
+            $resultChapter->setContent($contentHtml);
+            $resultChapter->setContentFormat(Chapter::CONTENT_TYPE_HTML);
         }
 
         if (count($idMap->getAllLocalIds()) > 0) {
@@ -63,11 +63,11 @@ class ChapterConverter
                 ] ;
             }
 
-            $resultContent->setNotes(json_encode($targetFootnotes));
-            $resultContent->setNotesFormat(Content::CONTENT_TYPE_JSON);
+            $resultChapter->setNotes(json_encode($targetFootnotes));
+            $resultChapter->setNotesFormat(Chapter::CONTENT_TYPE_JSON);
         }
 
-        return $resultContent;
+        return $resultChapter;
     }
 
     public function processHtml($sourceHtml, ChapterInterface $extractedChapter, FootnoteIdMap $idMap, $allowedTags)

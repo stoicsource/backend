@@ -33,8 +33,8 @@ class Edition
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private $work;
 
-    #[ORM\OneToMany(targetEntity: Content::class, mappedBy: 'edition')]
-    private $contents;
+    #[ORM\OneToMany(targetEntity: Chapter::class, mappedBy: 'edition')]
+    private $chapters;
 
     #[ORM\Column(type: 'string', length: 12, nullable: true)]
     private $year;
@@ -66,7 +66,7 @@ class Edition
 
     public function __construct()
     {
-        $this->contents = new ArrayCollection();
+        $this->chapters = new ArrayCollection();
     }
 
     public function __toString(){
@@ -103,29 +103,29 @@ class Edition
     }
 
     /**
-     * @return Collection|Content[]
+     * @return Collection|Chapter[]
      */
-    public function getContents(): Collection
+    public function getChapters(): Collection
     {
-        return $this->contents;
+        return $this->chapters;
     }
 
-    public function addContent(Content $content): self
+    public function addChapter(Chapter $chapter): self
     {
-        if (!$this->contents->contains($content)) {
-            $this->contents[] = $content;
-            $content->setEdition($this);
+        if (!$this->chapters->contains($chapter)) {
+            $this->chapters[] = $chapter;
+            $chapter->setEdition($this);
         }
 
         return $this;
     }
 
-    public function removeContent(Content $content): self
+    public function removeChapter(Chapter $chapter): self
     {
-        if ($this->contents->removeElement($content)) {
+        if ($this->chapters->removeElement($chapter)) {
             // set the owning side to null (unless already changed)
-            if ($content->getEdition() === $this) {
-                $content->setEdition(null);
+            if ($chapter->getEdition() === $this) {
+                $chapter->setEdition(null);
             }
         }
 

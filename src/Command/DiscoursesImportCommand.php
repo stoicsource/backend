@@ -4,7 +4,7 @@
 namespace App\Command;
 
 
-use App\Entity\Content;
+use App\Entity\Chapter;
 use App\Entity\Edition;
 use App\Entity\Import\ExtractedChapter;
 use App\Entity\TocEntry;
@@ -79,6 +79,7 @@ class DiscoursesImportCommand extends Command
         $edition->setQuality(Edition::QUALITY_SOLID);
         $edition->setHasContent(true);
         $edition->setCopyright('Public Domain');
+        $edition->setContributor(null);
         $this->entityManager->persist($edition);
 
 
@@ -89,7 +90,7 @@ class DiscoursesImportCommand extends Command
         $converter->setTargetNoteTag('sup');
         $converter->setTargetNoteAttribute('data-footnote-reference');
         $converter->setAllowedTagsAndAttributesTitle(['sup' => 'data-footnote-reference']);
-        $converter->setAllowedTagsAndAttributesContent(Content::ALLOWED_HTML_TAGS_AND_ATTRIBUTES);
+        $converter->setAllowedTagsAndAttributesContent(Chapter::ALLOWED_HTML_TAGS_AND_ATTRIBUTES);
 
         $footnoteRepository = new BasicFootnoteRepository();
         $x = new DOMXPath($doc);
@@ -159,11 +160,11 @@ class DiscoursesImportCommand extends Command
                     $this->entityManager->persist($tocEntry);
                 }
 
-                $newContent = $converter->convert($chapter);
-                $newContent->setEdition($edition);
-                $newContent->setTocEntry($tocEntry);
+                $newChapter = $converter->convert($chapter);
+                $newChapter->setEdition($edition);
+                $newChapter->setTocEntry($tocEntry);
 
-                $this->entityManager->persist($newContent);
+                $this->entityManager->persist($newChapter);
             }
         }
 

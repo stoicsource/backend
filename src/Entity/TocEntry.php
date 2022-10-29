@@ -27,8 +27,8 @@ class TocEntry
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private $work;
 
-    #[ORM\OneToMany(targetEntity: Content::class, mappedBy: 'tocEntry')]
-    private $contents;
+    #[ORM\OneToMany(targetEntity: Chapter::class, mappedBy: 'tocEntry')]
+    private $chapters;
 
     #[ORM\Column(type: 'string', length: 255)]
     private $label;
@@ -38,7 +38,7 @@ class TocEntry
 
     public function __construct()
     {
-        $this->contents = new ArrayCollection();
+        $this->chapters = new ArrayCollection();
     }
 
     public function __toString(){
@@ -63,29 +63,29 @@ class TocEntry
     }
 
     /**
-     * @return Collection|Content[]
+     * @return Collection|Chapter[]
      */
-    public function getContents(): Collection
+    public function getChapters(): Collection
     {
-        return $this->contents;
+        return $this->chapters;
     }
 
-    public function addContent(Content $content): self
+    public function addChapter(Chapter $chapter): self
     {
-        if (!$this->contents->contains($content)) {
-            $this->contents[] = $content;
-            $content->setTocEntry($this);
+        if (!$this->chapters->contains($chapter)) {
+            $this->chapters[] = $chapter;
+            $chapter->setTocEntry($this);
         }
 
         return $this;
     }
 
-    public function removeContent(Content $content): self
+    public function removeChapter(Chapter $chapter): self
     {
-        if ($this->contents->removeElement($content)) {
+        if ($this->chapters->removeElement($chapter)) {
             // set the owning side to null (unless already changed)
-            if ($content->getTocEntry() === $this) {
-                $content->setTocEntry(null);
+            if ($chapter->getTocEntry() === $this) {
+                $chapter->setTocEntry(null);
             }
         }
 

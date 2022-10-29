@@ -2,25 +2,25 @@
 
 namespace App\Repository;
 
-use App\Entity\Content;
+use App\Entity\Chapter;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method Content|null find($id, $lockMode = null, $lockVersion = null)
- * @method Content|null findOneBy(array $criteria, array $orderBy = null)
- * @method Content[]    findAll()
- * @method Content[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Chapter|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Chapter|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Chapter[]    findAll()
+ * @method Chapter[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ContentRepository extends ServiceEntityRepository
+class ChapterRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Content::class);
+        parent::__construct($registry, Chapter::class);
     }
 
     // /**
-    //  * @return Content[] Returns an array of Content objects
+    //  * @return Chapter[] Returns an array of Chapter objects
     //  */
     /*
     public function findByExampleField($value)
@@ -37,7 +37,7 @@ class ContentRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?Content
+    public function findOneBySomeField($value): ?Chapter
     {
         return $this->createQueryBuilder('c')
             ->andWhere('c.exampleField = :val')

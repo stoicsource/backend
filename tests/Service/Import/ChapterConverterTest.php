@@ -2,7 +2,7 @@
 
 namespace App\Tests\Service\Import;
 
-use App\Entity\Content;
+use App\Entity\Chapter;
 use App\Entity\Import\ExtractedChapter;
 use App\Repository\BasicFootnoteRepository;
 use App\Service\Import\ChapterConverter;
@@ -19,7 +19,7 @@ class ChapterConverterTest extends TestCase
 
         $converter = $this->getChapterConverter();
         $contentEntity = $converter->convert($extractedChapter);
-        assert($contentEntity instanceof Content);
+        assert($contentEntity instanceof Chapter);
         $this->assertEquals('test title', $contentEntity->getTitle());
     }
 
@@ -29,7 +29,7 @@ class ChapterConverterTest extends TestCase
 
         $converter = $this->getChapterConverter();
         $contentEntity = $converter->convert($extractedChapter);
-        assert($contentEntity instanceof Content);
+        assert($contentEntity instanceof Chapter);
 
         $this->assertEquals('<p>test content</p>', $contentEntity->getContent());
     }
@@ -144,7 +144,7 @@ class ChapterConverterTest extends TestCase
         $htmlCleaner = new HtmlCleaner();
         $chapterConverter = new ChapterConverter(new NodeConverter(), $htmlCleaner);
         $chapterConverter->setAllowedTagsAndAttributesTitle(['sup' => 'data-footnote-reference']);
-        $chapterConverter->setAllowedTagsAndAttributesContent(Content::ALLOWED_HTML_TAGS_AND_ATTRIBUTES);
+        $chapterConverter->setAllowedTagsAndAttributesContent(Chapter::ALLOWED_HTML_TAGS_AND_ATTRIBUTES);
         return $chapterConverter;
     }
 }

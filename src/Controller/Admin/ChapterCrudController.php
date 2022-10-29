@@ -2,18 +2,18 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\Content;
+use App\Entity\Chapter;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 
-class ContentCrudController extends AbstractCrudController
+class ChapterCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
     {
-        return Content::class;
+        return Chapter::class;
     }
 
     public function configureCrud(Crud $crud): Crud

@@ -3,7 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Author;
-use App\Entity\Content;
+use App\Entity\Chapter;
 use App\Entity\Edition;
 use App\Entity\TocEntry;
 use App\Entity\Work;
@@ -51,6 +51,6 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Editions', 'fas fa-list', Edition::class);
         yield MenuItem::linkToCrud('Authors', 'fas fa-list', Author::class);
         yield MenuItem::linkToCrud('TOC Entries', 'fas fa-list', TocEntry::class);
-        yield MenuItem::linkToCrud('Contents', 'fas fa-list', Content::class);
+        yield MenuItem::linkToCrud('Chapters', 'fas fa-list', Chapter::class);
     }
 }
