@@ -22,7 +22,7 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
         'pagination_maximum_items_per_page' => 100
     ],
     normalizationContext: [
-        'groups' => ['read']
+        'groups' => ['readChapter']
     ]
 )]
 #[ApiFilter(SearchFilter::class, properties: ['tocEntry' => 'exact', 'edition' => 'exact'])]
@@ -78,13 +78,13 @@ class Chapter
     #[ORM\Column(type: Types::SMALLINT)]
     private ?int $notesFormat = null;
 
-    #[Groups(["read"])]
+    #[Groups(["readChapter"])]
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    #[Groups(["read"])]
+    #[Groups(["readChapter"])]
     public function getTocEntry(): ?TocEntry
     {
         return $this->tocEntry;
@@ -97,7 +97,7 @@ class Chapter
         return $this;
     }
 
-    #[Groups(["read"])]
+    #[Groups(["readChapter"])]
     public function getEdition(): ?Edition
     {
         return $this->edition;
@@ -110,7 +110,7 @@ class Chapter
         return $this;
     }
 
-    #[Groups(["read"])]
+    #[Groups(["readChapter"])]
     public function getContent(): ?string
     {
         return $this->content;
@@ -123,7 +123,7 @@ class Chapter
         return $this;
     }
 
-    #[Groups(["read"])]
+    #[Groups(["readChapter"])]
     public function getNotes(): ?string
     {
         return $this->notes;
@@ -136,7 +136,7 @@ class Chapter
         return $this;
     }
 
-    #[Groups(["read"])]
+    #[Groups(["readChapter"])]
     public function getTitle(): ?string
     {
         return $this->title;
@@ -161,7 +161,7 @@ class Chapter
         return $this;
     }
 
-    #[Groups(["read"])]
+    #[Groups(["readChapter"])]
     #[SerializedName("contentType")]
     public function getFormattedContentType(): string
     {
@@ -183,7 +183,7 @@ class Chapter
         return $this;
     }
 
-    #[Groups(["read"])]
+    #[Groups(["readChapter"])]
     #[SerializedName("notesFormat")]
     public function getFormattedNoteFormat(): string
     {

@@ -14,7 +14,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
     collectionOperations: ['get'],
     itemOperations: ['get'],
     normalizationContext: [
-        'groups' => ['read']
+        'groups' => ['readEdition']
     ]
 )]
 #[ApiFilter(SearchFilter::class, properties: ['work' => 'exact'])]
@@ -81,13 +81,13 @@ class Edition
         return $this->work . ', ' . $this->author . '(' . $this->year. ')';
     }
 
-    #[Groups(["read"])]
+    #[Groups(["readEdition"])]
     public function getId(): int
     {
         return $this->id;
     }
 
-    #[Groups(["read"])]
+    #[Groups(["readEdition"])]
     public function getName(): string
     {
         return $this->name;
@@ -100,7 +100,7 @@ class Edition
         return $this;
     }
 
-    #[Groups(["read"])]
+    #[Groups(["readEdition"])]
     public function getWork(): Work
     {
         return $this->work;
@@ -143,7 +143,7 @@ class Edition
         return $this;
     }
 
-    #[Groups(["read"])]
+    #[Groups(["readEdition"])]
     public function getYear(): ?string
     {
         return $this->year;
@@ -156,7 +156,7 @@ class Edition
         return $this;
     }
 
-    #[Groups(["read"])]
+    #[Groups(["readEdition"])]
     public function getSource(): ?string
     {
         return $this->source;
@@ -172,7 +172,7 @@ class Edition
         return $this;
     }
 
-    #[Groups(["read"])]
+    #[Groups(["readEdition"])]
     public function getLanguage(): string
     {
         return $this->language;
@@ -185,7 +185,7 @@ class Edition
         return $this;
     }
 
-    #[Groups(["read"])]
+    #[Groups(["readEdition"])]
     public function getQuality(): int
     {
         return $this->quality;
@@ -198,7 +198,7 @@ class Edition
         return $this;
     }
 
-    #[Groups(["read"])]
+    #[Groups(["readEdition"])]
     public function getAuthor(): Author
     {
         return $this->author;
@@ -211,7 +211,7 @@ class Edition
         return $this;
     }
 
-    #[Groups(["read"])]
+    #[Groups(["readEdition"])]
     public function getContributor(): ?array
     {
         return $this->contributor;
@@ -236,7 +236,7 @@ class Edition
         return $this;
     }
 
-    #[Groups(["read"])]
+    #[Groups(["readEdition"])]
     public function getHasContent(): ?bool
     {
         return $this->hasContent;
@@ -249,7 +249,7 @@ class Edition
         return $this;
     }
 
-    #[Groups(["read"])]
+    #[Groups(["readEdition"])]
     public function getCopyright(): string
     {
         return $this->copyright;
@@ -274,7 +274,7 @@ class Edition
         return $this;
     }
 
-    #[Groups(["read"])]
+    #[Groups(["readEdition"])]
     public function getSources(): ?array
     {
         return $this->sources;
