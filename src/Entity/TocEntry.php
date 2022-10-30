@@ -9,10 +9,14 @@ use App\Repository\TocEntryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource(
     collectionOperations: ['get'],
-    itemOperations: ['get']
+    itemOperations: ['get'],
+    normalizationContext: [
+        'groups' => ['readTocEntry']
+    ]
 )]
 #[ApiFilter(SearchFilter::class, properties: ['work' => 'exact'])]
 #[ORM\Entity(repositoryClass: TocEntryRepository::class)]
@@ -21,20 +25,20 @@ class TocEntry
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private int $id;
 
     #[ORM\ManyToOne(targetEntity: Work::class, inversedBy: 'tocEntries')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
-    private $work;
+    private Work $work;
 
-    #[ORM\OneToMany(targetEntity: Chapter::class, mappedBy: 'tocEntry')]
-    private $chapters;
+    #[ORM\OneToMany(mappedBy: 'tocEntry', targetEntity: Chapter::class)]
+    private Collection $chapters;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private $label;
+    private string $label;
 
     #[ORM\Column(type: 'integer')]
-    private $sortOrder;
+    private int $sortOrder;
 
     public function __construct()
     {
@@ -45,11 +49,13 @@ class TocEntry
         return $this->label;
     }
 
+    #[Groups(["readTocEntry"])]
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    #[Groups(["readTocEntry"])]
     public function getWork(): ?Work
     {
         return $this->work;
@@ -92,6 +98,7 @@ class TocEntry
         return $this;
     }
 
+    #[Groups(["readTocEntry"])]
     public function getLabel(): ?string
     {
         return $this->label;
@@ -104,6 +111,7 @@ class TocEntry
         return $this;
     }
 
+    #[Groups(["readTocEntry"])]
     public function getSortOrder(): ?int
     {
         return $this->sortOrder;
