@@ -7,10 +7,14 @@ use App\Repository\WorkRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource(
     collectionOperations: ['get'],
     itemOperations: ['get'],
+    normalizationContext: [
+        'groups' => ['readWork']
+    ]
 )]
 #[ORM\Entity(repositoryClass: WorkRepository::class)]
 class Work
@@ -18,24 +22,24 @@ class Work
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private int $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private $name;
+    private string $name;
 
-    #[ORM\OneToMany(targetEntity: Edition::class, mappedBy: 'work')]
-    private $editions;
+    #[ORM\OneToMany(mappedBy: 'work', targetEntity: Edition::class)]
+    private Collection $editions;
 
-    #[ORM\OneToMany(targetEntity: TocEntry::class, mappedBy: 'work')]
+    #[ORM\OneToMany(mappedBy: 'work', targetEntity: TocEntry::class)]
     #[ORM\OrderBy(['sortOrder' => 'ASC'])]
-    private $tocEntries;
+    private Collection $tocEntries;
 
     #[ORM\Column(type: 'string', length: 255, unique: true)]
-    private $urlSlug;
+    private string $urlSlug;
 
     #[ORM\ManyToOne(targetEntity: Author::class, inversedBy: 'works')]
     #[ORM\JoinColumn(nullable: false)]
-    private $author;
+    private Author $author;
 
     public function __construct()
     {
@@ -47,11 +51,13 @@ class Work
         return $this->name;
     }
 
+    #[Groups(["readWork"])]
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    #[Groups(["readWork"])]
     public function getName(): ?string
     {
         return $this->name;
@@ -67,6 +73,7 @@ class Work
     /**
      * @return Collection|Edition[]
      */
+    #[Groups(["readWork"])]
     public function getEditions(): Collection
     {
         return $this->editions;
@@ -124,6 +131,7 @@ class Work
         return $this;
     }
 
+    #[Groups(["readWork"])]
     public function getUrlSlug(): ?string
     {
         return $this->urlSlug;
@@ -136,6 +144,7 @@ class Work
         return $this;
     }
 
+    #[Groups(["readWork"])]
     public function getAuthor(): ?Author
     {
         return $this->author;
