@@ -47,7 +47,7 @@ class Edition
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private string $source;
 
-    #[ORM\Column(type: 'string', length: 3)]
+    #[ORM\Column(type: 'string', length: 3, options: ['default' => 'eng'])]
     private string $language;
 
     #[ORM\Column(type: 'smallint')]
