@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Repository;
+namespace App\Tests\unit\Repository;
 
 use App\Repository\BasicFootnoteRepository;
 use PHPUnit\Framework\TestCase;

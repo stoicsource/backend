@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Entity;
+namespace App\Tests\unit\Entity;
 
 use App\Entity\FootnoteIdMap;
 use DOMDocument;

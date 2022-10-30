@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Entity\Import;
+namespace App\Tests\unit\Entity\Import;
 
 use App\Entity\Import\ExtractedChapter;
 use App\Repository\BasicFootnoteRepository;

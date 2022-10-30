@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Service\Import;
+namespace App\Tests\unit\Service\Import;
 
 use App\Entity\Chapter;
 use App\Entity\Import\ExtractedChapter;
