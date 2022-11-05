@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\TocEntry;
+use App\Entity\Work;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -19,32 +20,19 @@ class TocEntryRepository extends ServiceEntityRepository
         parent::__construct($registry, TocEntry::class);
     }
 
-    // /**
-    //  * @return TocEntry[] Returns an array of TocEntry objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function findOrCreate(Work $work, string $label, int $sortOrder, bool $flush = true): TocEntry
     {
-        return $this->createQueryBuilder('t')
-            ->andWhere('t.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('t.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        $tocEntry = $this->findOneBy(['work' => $work, 'label' => $label]);
+        if (!$tocEntry) {
+            $tocEntry = new TocEntry();
+            $tocEntry->setWork($work);
+            $tocEntry->setLabel($label);
+            $tocEntry->setSortOrder($sortOrder);
+            $this->getEntityManager()->persist($tocEntry);
+            if ($flush) {
+                $this->getEntityManager()->flush();
+            }
+        }
+        return $tocEntry;
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?TocEntry
-    {
-        return $this->createQueryBuilder('t')
-            ->andWhere('t.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

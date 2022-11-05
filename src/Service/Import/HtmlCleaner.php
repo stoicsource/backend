@@ -7,33 +7,19 @@ use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
 
 class HtmlCleaner
 {
-    private array $allowedTagsAndAttributes = [];
-
-    public function getAllowedTagsAndAttributes(): array
+    public function clean(string $taintedHtml, $allowedTagsAndAttributes): string
     {
-        return $this->allowedTagsAndAttributes;
-    }
-
-    public function setAllowedTagsAndAttributes(array $allowedTagsAndAttributes): void
-    {
-        $this->allowedTagsAndAttributes = $allowedTagsAndAttributes;
-    }
-
-    public function clean(string $taintedHtml): string
-    {
-        $strippedHtml = strip_tags($taintedHtml, array_map(function ($attribs, $tag) { return '<' . $tag . '>'; }, $this->allowedTagsAndAttributes, array_keys($this->allowedTagsAndAttributes)) );
+        $strippedHtml = strip_tags($taintedHtml, array_map(function ($attribs, $tag) { return '<' . $tag . '>'; }, $allowedTagsAndAttributes, array_keys($allowedTagsAndAttributes)) );
 
         $config = (new HtmlSanitizerConfig());
 
-        foreach ($this->allowedTagsAndAttributes as $tag => $attributes) {
+        foreach ($allowedTagsAndAttributes as $tag => $attributes) {
             $config = $config->allowElement($tag, $attributes);
         }
 
         $sanitizer = new HtmlSanitizer($config);
         $sanitizedHtml = $sanitizer->sanitize($strippedHtml);
 
-        $sanitizedHtml = trim($sanitizedHtml);
-
-        return $sanitizedHtml;
+        return trim($sanitizedHtml);
     }
 }

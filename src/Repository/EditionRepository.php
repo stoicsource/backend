@@ -2,7 +2,9 @@
 
 namespace App\Repository;
 
+use App\Entity\Author;
 use App\Entity\Edition;
+use App\Entity\Work;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -19,32 +21,28 @@ class EditionRepository extends ServiceEntityRepository
         parent::__construct($registry, Edition::class);
     }
 
-    // /**
-    //  * @return Edition[] Returns an array of Edition objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function flush(): void
     {
-        return $this->createQueryBuilder('e')
-            ->andWhere('e.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('e.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        $this->getEntityManager()->flush();
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?Edition
+    public function create(string $name, string $year, Work $work, Author $author, array $sources, bool $flush = true): Edition
     {
-        return $this->createQueryBuilder('e')
-            ->andWhere('e.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        $edition = new Edition();
+        $edition->setName($name);
+        $edition->setWork($work);
+        $edition->setYear($year);
+        $edition->setLanguage('eng');
+        $edition->setSources($sources);
+        $edition->setAuthor($author);
+        $edition->setQuality(Edition::QUALITY_SOLID);
+        $edition->setHasContent(true);
+        $edition->setCopyright('Public Domain');
+        $edition->setContributor(null);
+        $this->getEntityManager()->persist($edition);
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+        return $edition;
     }
-    */
 }

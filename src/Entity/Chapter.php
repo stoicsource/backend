@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use App\Dto\ChapterDto;
 use App\Filter\RandomOrderFilter;
 use App\Repository\ChapterRepository;
 use Doctrine\DBAL\Types\Types;
@@ -35,9 +36,9 @@ class Chapter
     const CONTENT_TYPE_JSON = 3;
 
     const CONTENT_TYPE_NAMES = [
-      self::CONTENT_TYPE_PLAIN => 'text',
-      self::CONTENT_TYPE_HTML => 'html',
-      self::CONTENT_TYPE_JSON => 'json'
+        self::CONTENT_TYPE_PLAIN => 'text',
+        self::CONTENT_TYPE_HTML => 'html',
+        self::CONTENT_TYPE_JSON => 'json'
     ];
 
     // const ALLOWED_HTML_TAGS = ['<p>', '<blockquote>', '<sup>', '<b>', '<i>'];
@@ -49,6 +50,9 @@ class Chapter
         'i' => [],
         'br' => []
     ];
+
+    const FOOTNOTE_REFERENCE_TAG = 'sup';
+    const FOOTNOTE_REFERENCE_ID_ATTRIBUTE = 'data-footnote-reference';
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -77,6 +81,24 @@ class Chapter
 
     #[ORM\Column(type: Types::SMALLINT)]
     private ?int $notesFormat = null;
+
+    public static function fromDto(ChapterDto $source): Chapter
+    {
+        $newChapter = new self();
+        $newChapter->setTitle($source->getTitle());
+        $newChapter->setContent($source->getContent());
+        $newChapter->setNotes($source->getFootnotes() ? json_encode(
+            array_map(static function ($content, $noteId) {
+                return [
+                    'id' => $noteId,
+                    'content' => $content
+                ];
+            }, $source->getFootnotes(), array_keys($source->getFootnotes()))
+
+            , JSON_THROW_ON_ERROR) : null);
+        $newChapter->setNotesFormat(self::CONTENT_TYPE_JSON);
+        return $newChapter;
+    }
 
     #[Groups(["readChapter"])]
     public function getId(): ?int

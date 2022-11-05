@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Author;
 use App\Entity\Work;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -19,32 +20,25 @@ class WorkRepository extends ServiceEntityRepository
         parent::__construct($registry, Work::class);
     }
 
-    // /**
-    //  * @return Work[] Returns an array of Work objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function flush(): void
     {
-        return $this->createQueryBuilder('w')
-            ->andWhere('w.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('w.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        $this->getEntityManager()->flush();
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?Work
+    public function findByNameOrCreate(string $workName, string $urlSlug, Author $author, bool $flush = true): Work
     {
-        return $this->createQueryBuilder('w')
-            ->andWhere('w.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        $work = $this->findOneBy(['name' => $workName]);
+        if (!$work) {
+            $work = new Work();
+            $work->setAuthor($author);
+            $work->setName($workName);
+            $work->setUrlSlug($urlSlug);
+            $this->getEntityManager()->persist($work);
+            if ($flush) {
+                $this->getEntityManager()->flush();
+            }
+        }
+
+        return $work;
     }
-    */
 }

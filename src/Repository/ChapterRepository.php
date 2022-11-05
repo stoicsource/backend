@@ -19,32 +19,11 @@ class ChapterRepository extends ServiceEntityRepository
         parent::__construct($registry, Chapter::class);
     }
 
-    // /**
-    //  * @return Chapter[] Returns an array of Chapter objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function save(Chapter $chapter, bool $flush = true): void
     {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('c.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        $this->getEntityManager()->persist($chapter);
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Chapter
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

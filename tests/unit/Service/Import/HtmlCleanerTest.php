@@ -12,8 +12,7 @@ class HtmlCleanerTest extends TestCase
     {
         $taintedHtml = '<h4 xmlns="http://www.w3.org/1999/xhtml" epub:type="title" xmlns:epub="http://www.idpf.org/2007/ops">That the Faculties<a href="#note-57" id="noteref-57" epub:type="noteref">57</a> Are Not Safe to the Uninstructed</h4>';
         $cleaner = new HtmlCleaner();
-        $cleaner->setAllowedTagsAndAttributes(Chapter::ALLOWED_HTML_TAGS_AND_ATTRIBUTES);
-        $cleanedHtml = $cleaner->clean($taintedHtml);
+        $cleanedHtml = $cleaner->clean($taintedHtml, Chapter::ALLOWED_HTML_TAGS_AND_ATTRIBUTES);
         $expectedHtml = 'That the Faculties57 Are Not Safe to the Uninstructed';
         $this->assertEquals($expectedHtml, $cleanedHtml);
     }
@@ -22,8 +21,7 @@ class HtmlCleanerTest extends TestCase
     {
         $sourceHtml = '<p>In as many ways as we can change things which are equivalent to one another, in just so many ways we can change the forms of arguments (<i>ἐπιχειρήματα</i>) and enthymemes...</p>';
         $cleaner = new HtmlCleaner();
-        $cleaner->setAllowedTagsAndAttributes(Chapter::ALLOWED_HTML_TAGS_AND_ATTRIBUTES);
-        $cleanedHtml = $cleaner->clean($sourceHtml);
+        $cleanedHtml = $cleaner->clean($sourceHtml, Chapter::ALLOWED_HTML_TAGS_AND_ATTRIBUTES);
         $this->assertEquals($sourceHtml, $cleanedHtml);
     }
 
@@ -33,8 +31,7 @@ class HtmlCleanerTest extends TestCase
         $expectedHtml = '<p>Cicero, <i>Tusculan Disputations</i> v 37, has the same: “<i>Socrates cum rogaretur, cujatem se esse diceret, Mundanum, inquit. Totius enim mundi se incolam et civem arbitrabatur.</i>” —⁠John Upton ↩</p>';
 
         $cleaner = new HtmlCleaner();
-        $cleaner->setAllowedTagsAndAttributes(Chapter::ALLOWED_HTML_TAGS_AND_ATTRIBUTES);
-        $cleanedHtml = $cleaner->clean($sourceHtml);
+        $cleanedHtml = $cleaner->clean($sourceHtml, Chapter::ALLOWED_HTML_TAGS_AND_ATTRIBUTES);
         $this->assertEquals($expectedHtml, $cleanedHtml);
     }
 
@@ -44,8 +41,7 @@ class HtmlCleanerTest extends TestCase
         $expectedHtml = 'Johann Schweigh\u00e4user writes';
 
         $cleaner = new HtmlCleaner();
-        $cleaner->setAllowedTagsAndAttributes(Chapter::ALLOWED_HTML_TAGS_AND_ATTRIBUTES);
-        $cleanedHtml = $cleaner->clean($sourceHtml);
+        $cleanedHtml = $cleaner->clean($sourceHtml, Chapter::ALLOWED_HTML_TAGS_AND_ATTRIBUTES);
         $this->assertEquals($expectedHtml, $cleanedHtml);
     }
 }
