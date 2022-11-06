@@ -3,6 +3,7 @@
 namespace App\Adapter;
 
 use App\Dto\ChapterDto;
+use App\Dto\EditionDto;
 use App\Entity\Chapter;
 use App\Entity\FootnoteIdMap;
 use App\Repository\BasicFootnoteRepository;
@@ -14,7 +15,7 @@ use DOMNode;
 use DOMXPath;
 use Exception;
 
-class DiscoursesEditionWebSource implements EditionWebSourceInterface
+class DiscoursesLongWebSource implements EditionWebSourceInterface
 {
     private const sourceFootnoteTag = 'a';
 
@@ -111,39 +112,13 @@ class DiscoursesEditionWebSource implements EditionWebSourceInterface
         }
     }
 
-//    public function processHtml($sourceHtml, $allowedTags)
-//    {
-//        $contentDoc = new DOMDocument('1.0', 'utf-8');
-//        $contentDoc->loadHTML(mb_convert_encoding($sourceHtml, 'HTML-ENTITIES', 'UTF-8'));
-//        $contentBaseNode = $contentDoc->getElementsByTagName('body')->item(0);
-//        assert($contentBaseNode instanceof DOMElement);
-//
-//        $this->nodeConverter->convertAllChildren($contentBaseNode, self::sourceFootnoteTag, null, Chapter::FOOTNOTE_REFERENCE_TAG, Chapter::FOOTNOTE_REFERENCE_ID_ATTRIBUTE);
-//        // $idMap->renumberNoteIds($contentBaseNode, Chapter::FOOTNOTE_REFERENCE_TAG, Chapter::FOOTNOTE_REFERENCE_ID_ATTRIBUTE);
-//
-//        $contentHtml = $contentDoc->saveHTML($contentBaseNode);
-//        $this->htmlCleaner->setAllowedTagsAndAttributes($allowedTags);
-//        return $this->htmlCleaner->clean($contentHtml);
-//    }
-
-//
-//    /**
-//     * @throws Exception
-//     */
-//    public function extractFootnotes(string $html, FootnoteReferenceCollector $collector, BasicFootnoteRepository $footnoteRepo): array
-//    {
-//        $footnotes = [];
-//
-//        $footnoteIds = $collector->collectReferences($html, Chapter::FOOTNOTE_REFERENCE_TAG, Chapter::FOOTNOTE_REFERENCE_ID_ATTRIBUTE);
-//
-//        foreach ($footnoteIds as $footnoteId) {
-//            $noteText = $footnoteRepo->getById($footnoteId);
-//            if ($noteText === null) {
-//                throw new Exception('footnote not found in repo');
-//            }
-//            $footnotes[$footnoteId] = $noteText;
-//        }
-//
-//        return $footnotes;
-//    }
+    public function getEdition(): EditionDto
+    {
+        return new EditionDto(
+            'The Discourses of Epictetus',
+            1877,
+            'George Long',
+            'Discourses'
+        );
+    }
 }

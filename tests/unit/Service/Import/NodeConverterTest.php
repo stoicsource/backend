@@ -86,5 +86,34 @@ class NodeConverterTest extends TestCase
         $this->assertEquals(456, $supNode->nodeValue);
     }
 
+    public function testRemovesTag()
+    {
+        $doc = new DOMDocument();
+        $baseNode = $doc->appendChild($doc->createElement('sup'));
+        $linkNode = $doc->createElement('a', '[1]');
+        $baseNode->appendChild($linkNode);
 
+        $nodeValueConverter = function ($nodeValue) { return str_replace(['[', ']'], ['', ''], $nodeValue); };
+        $converter = new NodeConverter();
+        $converter->flattenTag($baseNode, 'a', $nodeValueConverter);
+
+        $this->assertEquals(0, $baseNode->getElementsByTagName('a')->count());
+        $this->assertEquals('1', $baseNode->nodeValue);
+    }
+
+    public function testConvertsAttribute()
+    {
+        $doc = new DOMDocument();
+        $baseNode = $doc->appendChild($doc->createElement('p'));
+        $supNode = $doc->createElement('sup');
+        $supNode->setAttribute('id', 'cite_ref-1');
+        $baseNode->appendChild($supNode);
+
+        $attributeValueConverter = function ($nodeValue) { return str_replace('cite_ref-', '', $nodeValue); };
+        $converter = new NodeConverter();
+        $converter->convertAttributes($baseNode, 'sup', 'id', 'my-new-attribute', $attributeValueConverter);
+
+        $this->assertEquals('1', $supNode->getAttribute('my-new-attribute'));
+        $this->assertEquals(false, $supNode->hasAttribute('id'));
+    }
 }

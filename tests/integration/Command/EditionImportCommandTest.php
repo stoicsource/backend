@@ -2,9 +2,11 @@
 
 namespace App\Tests\integration\Command;
 
-use App\Adapter\DiscoursesEditionWebSource;
+use App\Adapter\DiscoursesLongWebSource;
 use App\Command\EditionImportCommand;
 use App\Service\Import\EditionImporter;
+use App\Service\Import\HtmlCleaner;
+use App\Service\Import\NodeConverter;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 
@@ -21,11 +23,13 @@ class EditionImportCommandTest extends TestCase
         $editionImporterMock->expects(self::once())->method('import');
 
         $command = new EditionImportCommand(
-            $this->createMock(DiscoursesEditionWebSource::class),
+            $this->createMock(NodeConverter::class),
+            $this->createMock(HtmlCleaner::class),
             $editionImporterMock
         );
         $commandTester = new CommandTester($command);
         $commandTester->execute([
+            'adapter' => 'App\Adapter\LettersGummereWebSource',
             'source' => 'https://www.testurl.com'
         ]);
 

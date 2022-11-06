@@ -4,8 +4,11 @@
 namespace App\Command;
 
 
-use App\Adapter\DiscoursesEditionWebSource;
+use App\Adapter\DiscoursesLongWebSource;
 use App\Service\Import\EditionImporter;
+use App\Service\Import\HtmlCleaner;
+use App\Service\Import\NodeConverter;
+use ReflectionClass;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -16,7 +19,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 class EditionImportCommand extends Command
 {
     public function __construct(
-        private readonly DiscoursesEditionWebSource $sourceAdapter,
+        private readonly NodeConverter   $nodeConverter,
+        private readonly HtmlCleaner     $htmlCleaner,
         private readonly EditionImporter $editionImporter
     )
     {
@@ -27,19 +31,24 @@ class EditionImportCommand extends Command
     {
         $this
             ->setDescription('imports data from the web')
-            ->addArgument('source', InputArgument::REQUIRED, 'url pf the source')
-            // ->addArgument('adapter', InputArgument::REQUIRED, 'FQCN of the adapter to use')
-        ;
+            ->addArgument('adapter', InputArgument::REQUIRED, 'FQCN of the adapter to use')
+            ->addArgument('source', InputArgument::REQUIRED, 'url pf the source');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // $io = new SymfonyStyle($input, $output);
 
+        $adapterFqcn = $input->getArgument('adapter');
+        assert(!empty($adapterFqcn));
+        $ref = new ReflectionClass($adapterFqcn);
+        assert($ref->getNamespaceName() === 'App\Adapter');
+        $adapter = $ref->newInstanceArgs(array($this->nodeConverter, $this->htmlCleaner));
+
         $sourceUrl = $input->getArgument('source');
         assert(!empty($sourceUrl));
 
-        $this->editionImporter->import($this->sourceAdapter, $sourceUrl);
+        $this->editionImporter->import($adapter, $sourceUrl);
 
         return Command::SUCCESS;
     }

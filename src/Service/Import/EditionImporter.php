@@ -4,7 +4,9 @@ namespace App\Service\Import;
 
 use App\Adapter\EditionWebSourceInterface;
 use App\Dto\ChapterDto;
+use App\Entity\Author;
 use App\Entity\Chapter;
+use App\Entity\Work;
 use App\Repository\AuthorRepository;
 use App\Repository\ChapterRepository;
 use App\Repository\EditionRepository;
@@ -25,19 +27,25 @@ class EditionImporter
 
     public function import(EditionWebSourceInterface $sourceMaterialAdapter, string $sourceUrl): void
     {
-        $discoursesWork = $this->workRepository->findByNameOrCreate(
-            'Discourses',
-            'discourses',
-            $this->authorRepository->findOneBy(['name' => 'Epictetus']),
-            false
-        );
+        $sourceEdition = $sourceMaterialAdapter->getEdition();
+//        $work = $this->workRepository->findByNameOrCreate(
+//            'Discourses',
+//            'discourses',
+//            $this->authorRepository->findOneBy(['name' => 'Epictetus']),
+//            false
+//        );
+        $work = $this->workRepository->findOneBy(['name' => $sourceEdition->getWorkName()]);
+        assert($work instanceof Work);
+
+        $author = $this->authorRepository->findOneBy(['name' => $sourceEdition->getAuthorName()]);
+        assert($author instanceof Author);
 
         $edition = $this->editionRepository->create(
-            'The Discourses of Epictetus',
-            1877,
-            $discoursesWork,
-            $this->authorRepository->findOneBy(['name' => 'George Long']),
-            [],
+            $sourceEdition->getName(),
+            $sourceEdition->getYear(),
+            $work,
+            $author,
+            $sourceEdition->getSources(),
             false
         );
 
