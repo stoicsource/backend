@@ -30,12 +30,12 @@ class LettersGummereWebSourceTest extends TestCase
         $this->assertEquals('1', $firstChapter->getTocLabel());
     }
 
-    public function testImportsBlockquotes()
-    {
-        $adapter = $this->getEditionSource();
-
-        $chapter = $adapter->getChapter('https://en.wikisource.org/wiki/Moral_letters_to_Lucilius/Letter_', 122);
-    }
+//    public function testImportsBlockquotes()
+//    {
+//        $adapter = $this->getEditionSource();
+//
+//        $chapter = $adapter->getChapter('https://en.wikisource.org/wiki/Moral_letters_to_Lucilius/Letter_', 122);
+//    }
 
     public function testAuthorName()
     {
