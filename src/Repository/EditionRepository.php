@@ -8,12 +8,6 @@ use App\Entity\Work;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-/**
- * @method Edition|null find($id, $lockMode = null, $lockVersion = null)
- * @method Edition|null findOneBy(array $criteria, array $orderBy = null)
- * @method Edition[]    findAll()
- * @method Edition[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- */
 class EditionRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -44,5 +38,13 @@ class EditionRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
         return $edition;
+    }
+
+    public function remove(Edition $existingEdition, bool $flush = true): void
+    {
+        $this->getEntityManager()->remove($existingEdition);
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
     }
 }

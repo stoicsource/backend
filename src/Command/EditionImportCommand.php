@@ -4,7 +4,6 @@
 namespace App\Command;
 
 
-use App\Adapter\DiscoursesLongWebSource;
 use App\Service\Import\EditionImporter;
 use App\Service\Import\HtmlCleaner;
 use App\Service\Import\NodeConverter;
@@ -13,6 +12,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(name: 'app:import:edition')]
@@ -32,7 +32,9 @@ class EditionImportCommand extends Command
         $this
             ->setDescription('imports data from the web')
             ->addArgument('adapter', InputArgument::REQUIRED, 'FQCN of the adapter to use')
-            ->addArgument('source', InputArgument::REQUIRED, 'url pf the source');
+            ->addArgument('source', InputArgument::REQUIRED, 'url pf the source')
+            ->addOption('replace', null, InputOption::VALUE_OPTIONAL, 'replace existing edition', false)
+        ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -48,7 +50,9 @@ class EditionImportCommand extends Command
         $sourceUrl = $input->getArgument('source');
         assert(!empty($sourceUrl));
 
-        $this->editionImporter->import($adapter, $sourceUrl);
+        $replaceExisting = $input->getOption('replace');
+
+        $this->editionImporter->import($adapter, $sourceUrl, $replaceExisting);
 
         return Command::SUCCESS;
     }

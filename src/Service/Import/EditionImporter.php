@@ -25,7 +25,7 @@ class EditionImporter
     {
     }
 
-    public function import(EditionWebSourceInterface $sourceMaterialAdapter, string $sourceUrl): void
+    public function import(EditionWebSourceInterface $sourceMaterialAdapter, string $sourceUrl, bool $replaceExisting): void
     {
         $sourceEdition = $sourceMaterialAdapter->getEdition();
 //        $work = $this->workRepository->findByNameOrCreate(
@@ -40,6 +40,12 @@ class EditionImporter
         $author = $this->authorRepository->findOneBy(['name' => $sourceEdition->getAuthorName()]);
         assert($author instanceof Author);
 
+        if ($replaceExisting) {
+            $existingEdition = $this->editionRepository->findOneBy(['name' => $sourceEdition->getName(), 'author' => $author]);
+            if ($existingEdition) {
+                $this->editionRepository->remove($existingEdition, false);
+            }
+        }
         $edition = $this->editionRepository->create(
             $sourceEdition->getName(),
             $sourceEdition->getYear(),
