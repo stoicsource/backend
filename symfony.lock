@@ -104,9 +104,6 @@
             "ref": "b131e6cbfe1b898a508987851963fff485986285"
         }
     },
-    "fig/link-util": {
-        "version": "1.2.0"
-    },
     "friendsofphp/proxy-manager-lts": {
         "version": "v1.0.5"
     },

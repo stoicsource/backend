@@ -21,8 +21,6 @@ class ChapterTest extends ApiTestCase
                 'tocEntry' => '/api/v2/toc_entries/1054',
                 'edition' => '/api/v2/editions/92',
                 'content' => 'See facts as they really are, distinguishing their matter, cause, relation.',
-                'notes' => NULL,
-                'title' => NULL,
                 'contentType' => 'text',
                 'notesFormat' => 'text'
             ]
