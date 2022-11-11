@@ -2,9 +2,11 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use App\Dto\ChapterDto;
 use App\Filter\RandomOrderFilter;
 use App\Repository\ChapterRepository;
@@ -14,20 +16,15 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 
 #[ApiResource(
-    collectionOperations: ['get'],
-    itemOperations: ['get'],
-    attributes: [
-        'pagination_enabled' => true,
-        'pagination_client_items_per_page' => true,
-        'pagination_items_per_page' => 30,
-        'pagination_maximum_items_per_page' => 100
-    ],
-    normalizationContext: [
-        'groups' => ['readChapter']
-    ]
-)]
-#[ApiFilter(SearchFilter::class, properties: ['tocEntry' => 'exact', 'edition' => 'exact'])]
-#[ApiFilter(RandomOrderFilter::class)]
+    operations: [new Get(), new GetCollection()],
+    normalizationContext: ['groups' => ['readChapter']],
+    paginationClientItemsPerPage: true,
+    paginationEnabled: true,
+    paginationItemsPerPage: 30,
+    paginationMaximumItemsPerPage: 100)
+]
+#[ApiFilter(filterClass: SearchFilter::class, properties: ['tocEntry' => 'exact', 'edition' => 'exact'])]
+#[ApiFilter(filterClass: RandomOrderFilter::class)]
 #[ORM\Entity(repositoryClass: ChapterRepository::class)]
 class Chapter
 {

@@ -2,23 +2,19 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use App\Repository\EditionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ApiResource(
-    collectionOperations: ['get'],
-    itemOperations: ['get'],
-    normalizationContext: [
-        'groups' => ['readEdition']
-    ]
-)]
-#[ApiFilter(SearchFilter::class, properties: ['work' => 'exact'])]
+#[ApiResource(operations: [new Get(), new GetCollection()], normalizationContext: ['groups' => ['readEdition']])]
+#[ApiFilter(filterClass: SearchFilter::class, properties: ['work' => 'exact'])]
 #[ORM\Entity(repositoryClass: EditionRepository::class)]
 class Edition
 {
