@@ -15,6 +15,7 @@ use DOMNode;
 use DOMXPath;
 use Exception;
 
+/** @deprecated  */
 class DiscoursesLongWebSource implements EditionWebSourceInterface
 {
     private const sourceFootnoteTag = 'a';

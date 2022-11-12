@@ -11,6 +11,7 @@ use DOMDocument;
 use DOMElement;
 use DOMXPath;
 
+/** @deprecated  */
 class LettersGummereWebSource implements EditionWebSourceInterface
 {
     public function __construct(
