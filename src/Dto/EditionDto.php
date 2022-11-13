@@ -5,11 +5,14 @@ namespace App\Dto;
 
 class EditionDto
 {
+    public const LANG_CODE_GERMAN = 'deu';
+
     public function __construct(
         private string $name = '',
         private string $year = '',
         private string $authorName = '',
         private string $workName = '',
+        private string $language = '',
         private array $sources = []
     )
     {
@@ -63,6 +66,16 @@ class EditionDto
     public function setSources(array $sources): void
     {
         $this->sources = $sources;
+    }
+
+    public function getLanguage(): string
+    {
+        return $this->language;
+    }
+
+    public function setLanguage(string $language): void
+    {
+        $this->language = $language;
     }
 
 }

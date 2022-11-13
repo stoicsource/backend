@@ -29,13 +29,13 @@ class DiscoursesLongWebSourceTest extends TestCase
 //        $this->assertCount(15, $firstChapter->getFootnotes());
 //        $this->assertEquals('1.1', $firstChapter->getTocLabel());
 //    }
-
-    public function testAuthorName()
-    {
-        $adapter = $this->getEditionSource();
-        $this->assertEquals('George Long', $adapter->getEdition()->getAuthorName());
-
-    }
+//
+//    public function testAuthorName()
+//    {
+//        $adapter = $this->getEditionSource();
+//        $this->assertEquals('George Long', $adapter->getEdition()->getAuthorName());
+//
+//    }
 
     private function getEditionSource(): DiscoursesLongWebSource
     {

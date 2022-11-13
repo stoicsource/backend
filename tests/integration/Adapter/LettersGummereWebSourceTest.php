@@ -37,12 +37,12 @@ class LettersGummereWebSourceTest extends TestCase
 //        $chapter = $adapter->getChapter('https://en.wikisource.org/wiki/Moral_letters_to_Lucilius/Letter_', 122);
 //    }
 
-    public function testAuthorName()
-    {
-        $adapter = $this->getEditionSource();
-        $this->assertEquals('Richard Mott Gummere', $adapter->getEdition()->getAuthorName());
-
-    }
+//    public function testAuthorName()
+//    {
+//        $adapter = $this->getEditionSource();
+//        $this->assertEquals('Richard Mott Gummere', $adapter->getEdition()->getAuthorName());
+//
+//    }
 
     private function getEditionSource(): LettersGummereWebSource
     {
