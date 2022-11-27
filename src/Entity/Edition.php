@@ -223,7 +223,7 @@ class Edition
 
     public function getContributorPlainText(): string
     {
-        return $this->contributor ? json_encode($this->contributor) : "";
+        return json_encode($this->contributor ?? [], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     }
 
     public function setContributorPlainText(?string $contributor): self
@@ -286,7 +286,7 @@ class Edition
 
     public function getSourcesPlainText(): string
     {
-        return json_encode($this->sources ?? []);
+        return json_encode($this->sources ?? [], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     }
 
     public function setSourcesPlainText(string $sources): self
