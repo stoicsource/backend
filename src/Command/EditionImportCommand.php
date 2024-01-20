@@ -27,7 +27,7 @@ class EditionImportCommand extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription('imports data from the web')
