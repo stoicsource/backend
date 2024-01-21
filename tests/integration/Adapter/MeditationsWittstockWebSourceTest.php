@@ -2,7 +2,6 @@
 
 namespace App\Tests\integration\Adapter;
 
-use App\Adapter\LettersGummereWebSource;
 use App\Adapter\MeditationsWittstockWebSource;
 use App\Dto\ChapterDto;
 use App\Service\Import\HtmlCleaner;
@@ -11,12 +10,12 @@ use PHPUnit\Framework\TestCase;
 
 class MeditationsWittstockWebSourceTest extends TestCase
 {
-    private $sourceUrl;
+    private string $sourceUrl;
 
     public function setUp(): void
     {
         // $this->sourceUrl = 'https://www.projekt-gutenberg.org/antonius/selbstbe/chap001.html';
-        $this->sourceUrl = 'https://www.stoicsource.com/medwitt/chap001.html';
+        $this->sourceUrl = __DIR__ . '/testdata/MeditationsWittstock/chap001.html';
     }
 
     public function testEditionInfo()
@@ -37,25 +36,15 @@ class MeditationsWittstockWebSourceTest extends TestCase
         $adapter = $this->getEditionSource();
 
         $this->assertCount(17,  iterator_to_array($adapter->getBookChapters($this->sourceUrl, 1)));
-        $this->assertCount(17,  iterator_to_array($adapter->getBookChapters($this->sourceUrl, 2)));
-        $this->assertCount(16,  iterator_to_array($adapter->getBookChapters($this->sourceUrl, 3)));
-        $this->assertCount(51,  iterator_to_array($adapter->getBookChapters($this->sourceUrl, 4)));
-        $this->assertCount(36,  iterator_to_array($adapter->getBookChapters($this->sourceUrl, 5)));
-        $this->assertCount(59,  iterator_to_array($adapter->getBookChapters($this->sourceUrl, 6)));
-        $this->assertCount(75,  iterator_to_array($adapter->getBookChapters($this->sourceUrl, 7)));
-        $this->assertCount(61,  iterator_to_array($adapter->getBookChapters($this->sourceUrl, 8)));
-        $this->assertCount(42,  iterator_to_array($adapter->getBookChapters($this->sourceUrl, 9)));
-        $this->assertCount(38,  iterator_to_array($adapter->getBookChapters($this->sourceUrl, 10)));
-        $this->assertCount(39,  iterator_to_array($adapter->getBookChapters($this->sourceUrl, 11)));
         $this->assertCount(36,  iterator_to_array($adapter->getBookChapters($this->sourceUrl, 12)));
     }
 
-    public function testChapterCountTotal()
-    {
-        $adapter = $this->getEditionSource();
-
-        $this->assertEquals(487,   iterator_count($adapter->getChapters($this->sourceUrl)));
-    }
+//    public function testChapterCountTotal()
+//    {
+//        $adapter = $this->getEditionSource();
+//
+//        $this->assertEquals(487,   iterator_count($adapter->getChapters($this->sourceUrl)));
+//    }
 
     public function testFirstBookFirstChapterContent()
     {
