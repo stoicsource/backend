@@ -8,7 +8,6 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use App\Dto\ChapterDto;
-use App\Filter\RandomOrderFilter;
 use App\Repository\ChapterRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -24,7 +23,6 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
     paginationMaximumItemsPerPage: 100)
 ]
 #[ApiFilter(filterClass: SearchFilter::class, properties: ['tocEntry' => 'exact', 'edition' => 'exact'])]
-#[ApiFilter(filterClass: RandomOrderFilter::class)]
 #[ORM\Entity(repositoryClass: ChapterRepository::class)]
 class Chapter
 {
